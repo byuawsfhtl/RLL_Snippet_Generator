@@ -13,6 +13,8 @@ import csv
 import cv2
 
 
+image_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/images.tar'
+json_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/json.tar'
 
 def case_is_tar_file(input_path_1, image_file):
     dict = {}
@@ -39,6 +41,8 @@ for image_file in list_of_images:
         dict_of_image_and_json_paths[image_file_no_ext].append(image_path)
 
 
+def open_file(self, mode): # Open the tsv/csv_file
+    return open(self.get_file(), mode, newline='')
 
 def create_snippets(image_and_json_path, dict_of_image_and_json_paths):
     for image_and_json_path in dict_of_image_and_json_paths.values():
@@ -89,8 +93,10 @@ def create_snippets(image_and_json_path, dict_of_image_and_json_paths):
                     cropped_image.save(cropped_image_path)
 
 def main():
+    with open_file('r') as tar:
+        json_file = json_tar_path 
     list_of_jsons = case_is_tar_file()
-
+    
     for json_file in list_of_jsons:
         json_path = os.path.join(input_json_dir, json_file)
         json_file_no_ext = json_file.split('.')[0]
