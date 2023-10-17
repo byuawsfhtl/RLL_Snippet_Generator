@@ -10,10 +10,8 @@ import json
 import io
 import numpy as np
 import tarfile as tf
-import csv
 import cv2
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+
 
 class create_snippets():
     
