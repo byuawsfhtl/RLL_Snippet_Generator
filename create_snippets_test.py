@@ -4,8 +4,8 @@ from create_snippets import create_snippets
 
 class create_snippets_test(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/images.tar'
-        self.json_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/json.tar'
+        self.image_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/images.tar'
+        self.json_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/json.tar'
         self.instance = create_snippets
         self.name_to_json = dict()
         
