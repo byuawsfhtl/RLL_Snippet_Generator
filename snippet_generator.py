@@ -32,10 +32,7 @@ class snippet_generator():
         json_data = self.name_to_json[name]
         columns_and_rows = json_data['corners']
         for i in range(len(columns_and_rows)-2):     
-            for j in range(len(columns_and_rows[0])-1):
-                # Create a name for the image 
-                cropped_image_name = name + '_row_' + str(j) + '_col_' + str(i) + '.png'
-                
+            for j in range(len(columns_and_rows[0])-1):               
                 if (i > 33) and (j > 48):
                     print('stop here')
 
@@ -53,14 +50,10 @@ class snippet_generator():
                 cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
 
                 # Create a name for the image 
+                cropped_image_name = name + '_row_' + str(j) + '_col_' + str(i) + '.png'
                 
+                #Generate the snippet
                 yield cropped_image, cropped_image_name
-
-                # # Create a path to the cropped image
-                # cropped_image_path = os.path.join(output_snippets, cropped_image_name)
-
-                # # To save the cropped image into a directory. 
-                # cropped_image.save(cropped_image_path)
                                 
                                 
     def image_from_tar_generator(self, image_path):
@@ -89,7 +82,7 @@ class snippet_generator():
 
                         yield original_image, name 
                 else:
-                    print("Wrong file type. Please provide an image file type")                    
+                    print(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")                    
                         
 
     def extract_json(self, input_path):
