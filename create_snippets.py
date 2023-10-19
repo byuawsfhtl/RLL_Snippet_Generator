@@ -21,7 +21,7 @@ class create_snippets():
     name_to_json = dict()
 
     #Constructor for this class
-    def __init__(self): # Constructor
+    def __init__(self, tar1, tar2): # Constructor
         pass
 
     def case_is_tar_file(self, input_path):
@@ -69,6 +69,8 @@ class create_snippets():
 
                                 # Crop the image
                                 cropped_image = original_image.crop((left_side, upper_side, right_side, lower_side))
+                                
+                                yield cropped_image
 
                                 # Create a name for the image 
                                 cropped_image_name = name + '_row_' + str(j) + '_col_' + str(i) + '.png'
