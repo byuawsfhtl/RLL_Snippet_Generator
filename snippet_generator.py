@@ -97,7 +97,7 @@ class snippet_generator():
                     self.name_to_json[name] = dict_with_corner_points
                     # print(member)
                 else:
-                    print(f"Wrong file type. File was {name}. Please ensure that the tar includes only JSON files")
+                    print(f"Wrong file type. File name was {name}. Please ensure that the tar includes only JSON files")
 
     
         
