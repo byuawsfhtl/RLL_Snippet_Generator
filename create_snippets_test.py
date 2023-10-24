@@ -10,12 +10,12 @@ from io import StringIO
 
 class create_snippets_test(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/images.tar'
-        self.json_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/json.tar'
-        self.test_tarfile_path  = "C:/Users/gideo/Computer_Vision/Snippet_Generator/test.tar"
+        self.image_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/images.tar'
+        self.json_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/json.tar'
+        self.test_tarfile_path  = "V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/test.tar"
         self.instance = snippet_generator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = "This is not JSON data."
-        self.sample_image = Image.open("C:/Users/gideo/Computer_Vision/Snippet_Generator/sample_image.jpg")
+        self.sample_image = Image.open("V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/sample_image.jpg")
         # Create a sample JSON data and image for testing
         self.test_json_data = {
             'corners': [
