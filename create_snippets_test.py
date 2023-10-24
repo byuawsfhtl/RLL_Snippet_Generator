@@ -10,11 +10,12 @@ from io import StringIO
 
 class create_snippets_test(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/images.tar'
-        self.json_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/json.tar'
-        self.test_tarfile_path  = "V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/test.tar"
+        self.image_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/images.tar'
+        self.json_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/json.tar'
+        self.test_tarfile_path  = "C:/Users/gideo/Computer_Vision/Snippet_Generator/test.tar"
         self.instance = snippet_generator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = "This is not JSON data."
+        self.sample_image = Image.open("C:/Users/gideo/Computer_Vision/Snippet_Generator/sample_image.jpg")
         # Create a sample JSON data and image for testing
         self.test_json_data = {
             'corners': [
@@ -23,24 +24,33 @@ class create_snippets_test(unittest.TestCase):
             ]
         }
         
-    def test_make_snippets(self):
-        self.assertTrue(os.path.exists(self.image_tar_path))
-        self.assertTrue(os.path.exists(self.json_tar_path))
-
-        # Create a sample JSON data and image for testing
-        sample_json_data = {
-            'corners': [
-                (0, 0), (100, 0), (100, 100),
-                (0, 100), (100, 100), (100, 200)
-            ]
-        }
-        sample_image = Image.new('RGB', (100, 200))
+    def test_make_snippets_pass(self):
+        name = 'sample'
+        self.instance.name_to_json[name] = self.test_json_data
+        for snippet, name in self.instance.image_snippet_generator(self.sample_image, name):
+            assert snippet is not None
+            assert name is not None
         
-        self.instance.extract_json(self.json_tar_path)
-        for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
-            for snippet, name in self.instance.image_snippet_generator(image, name):
-                # print(name)
-                pass
+            
+    def test_fail_make_snippets(self):
+        #Redirect std out to catch print statements
+        original_stdout = sys.stdout
+        sys.stdout = StringIO()
+        name = 'sample'
+        for snippet, name in self.instance.image_snippet_generator(self.sample_image, name):
+            assert snippet is None
+            assert name is None
+
+        # Get the printed output
+        printed_output = sys.stdout.getvalue()
+
+        # Restore stdout
+        sys.stdout = original_stdout
+
+        expected_output = "Image sample not found in the json file\n"
+        
+        self.assertEqual(expected_output, printed_output)
+        
 
     def test_extract_json_from_tarfile(self):
         # Create a sample tar file for testing

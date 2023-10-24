@@ -29,31 +29,34 @@ class snippet_generator():
         self.snippet_names = set()
         
     def image_snippet_generator(self, image, name):
-        json_data = self.name_to_json[name]
-        columns_and_rows = json_data['corners']
-        for i in range(len(columns_and_rows)-2):     
-            for j in range(len(columns_and_rows[0])-1):               
-                if (i > 33) and (j > 48):
-                    print('stop here')
+        if name in self.name_to_json:
+            json_data = self.name_to_json[name]
+            columns_and_rows = json_data['corners']
+            for i in range(len(columns_and_rows)-2):     
+                for j in range(len(columns_and_rows[0])-1):               
+                    if (i > 33) and (j > 48):
+                        print('stop here') 
 
-                left_top_corner = columns_and_rows[i][j]
-                right_top_corner = columns_and_rows[i+1][j]
-                bottom_right_corner = columns_and_rows[i+1][j+1]
-                bottom_left_corner = columns_and_rows[i][j+1]
+                    left_top_corner = columns_and_rows[i][j]
+                    right_top_corner = columns_and_rows[i+1][j]
+                    bottom_right_corner = columns_and_rows[i+1][j+1]
+                    bottom_left_corner = columns_and_rows[i][j+1]
 
-                left_side = min(left_top_corner[0], bottom_left_corner[0]) 
-                upper_side = min(left_top_corner[1], right_top_corner[1])
-                right_side = max(bottom_right_corner[0], right_top_corner[0])
-                lower_side = max(bottom_right_corner[1], bottom_left_corner[1]) + 3
+                    left_side = min(left_top_corner[0], bottom_left_corner[0]) 
+                    upper_side = min(left_top_corner[1], right_top_corner[1])
+                    right_side = max(bottom_right_corner[0], right_top_corner[0])
+                    lower_side = max(bottom_right_corner[1], bottom_left_corner[1]) + 3
 
-                # Crop the image
-                cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
+                    # Crop the image
+                    cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
 
-                # Create a name for the image 
-                cropped_image_name = name + '_row_' + str(j) + '_col_' + str(i) + '.png'
-                
-                #Generate the snippet
-                yield cropped_image, cropped_image_name
+                    # Create a name for the image 
+                    cropped_image_name = name + '_row_' + str(j) + '_col_' + str(i) + '.png'
+                    
+                    #Generate the snippet
+                    yield cropped_image, cropped_image_name
+        else:
+            print(f"Image {name} not found in the json file")
                                 
                                 
     def image_from_tar_generator(self, image_path):
