@@ -10,14 +10,14 @@ from io import StringIO
 
 class create_snippets_test(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/images.tar'
-        self.json_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/json.tar'
-        self.test_tarfile_path  = "C:/Users/gideo/Computer_Vision/Snippet_Generator/test.tar"
-        self.test_image_tarfile_path = "C:/Users/gideo/Computer_Vision/Snippet_Generator/test_image.tar"
+        self.image_tar_path = 'tests/resources/images.tar'
+        self.json_tar_path = 'tests/resources/json.tar'
+        self.test_tarfile_path  = "tests/resources/test.tar"
+        self.test_image_tarfile_path = "tests/resources/test_image.tar"
         self.instance = snippet_generator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = "This is not JSON data."
-        self.sample_image_path = "C:/Users/gideo/Computer_Vision/Snippet_Generator/sample_image.jpg"
-        self.sample_image = Image.open("C:/Users/gideo/Computer_Vision/Snippet_Generator/sample_image.jpg")
+        self.sample_image_path = "tests/resources/sample_image.jpg"
+        self.sample_image = Image.open(self.sample_image_path)
         # Create a sample JSON data and image for testing
         self.test_json_data = {
             'corners': [
@@ -54,11 +54,11 @@ class create_snippets_test(unittest.TestCase):
         for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
             #Using each image and its name, generate the snippets
             for snippet, name in self.instance.image_snippet_generator(image, name):
-                snippet.show()
+                # snippet.show()
                 assert snippet is not None
                 assert name is not None
                 #Save the snippet
-                snippet.save(name)
+                # snippet.save(name)
         
     def test_make_snippets_pass(self):
         name = 'sample'
@@ -139,7 +139,7 @@ class create_snippets_test(unittest.TestCase):
 
         # Check that the 'name_to_json' dictionary is empty (no JSON data was added)
         self.assertEqual(expected_output, printed_output)
-        
+
 
 if __name__ == '__main__':
     unittest.main()

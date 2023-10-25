@@ -21,8 +21,13 @@ json_path = "path/to/json.json"
 # Initialize snippet generator
 snippet_generator = SnippetGenerator(image_path, json_path)
 
-# Generate snippets from an image and a json object containing coordinates
-for img, name in snippet_generator.generate_snippets_from_json(image_path, json_path):
-    # Do something with the snippet
-    pass
+#Extract the json files from the json tar file into the generator
+snippet_generator.extract_json(self.json_tar_path)
+
+#Extract the image files from the image tar file
+for image, name in snippet_generator.image_from_tar_generator(image_path):
+    #Using each image and its name, generate the snippets
+    for snippet, name in snippet_generator.image_snippet_generator(image, name):
+        #Do something with the snippet
+        pass
 ```
