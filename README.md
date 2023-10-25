@@ -22,7 +22,7 @@ json_path = "path/to/json.json"
 snippet_generator = SnippetGenerator(image_path, json_path)
 
 #Extract the json files from the json tar file into the generator
-snippet_generator.extract_json(self.json_tar_path)
+snippet_generator.extract_json(json_path)
 
 #Extract the image files from the image tar file
 for image, name in snippet_generator.image_from_tar_generator(image_path):
