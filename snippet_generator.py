@@ -6,6 +6,7 @@ It then opens each image and creates snippets of the image based on the corner p
 
 from PIL import Image
 import os
+import imghdr
 import json
 import io
 import numpy as np
@@ -71,19 +72,27 @@ class snippet_generator():
                 # If it is an image decode it and create the snippets
                 if type in set_of_img_extensions and len(self.name_to_json) > 0:
                     #Check if the image name is in the json file
-                    if name in self.name_to_json:                        
+                    if name in self.name_to_json:
+                        # Extract the image data from the tarfile
                         img_data = np.asarray(bytearray(tar_file.extractfile(member).read()), dtype=np.uint8)
+                        
+                        # Decode the image file
+                        cv2_image = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
+
+                        if cv2_image is not None:
+                            #Create an Image
+                            original_image = Image.fromarray(cv2_image)
+                            
+                            self.image_names.add(name)                       
+
+                            yield original_image, name 
+                        else:
+                            # Image decoding failed
+                            print(f"cv2_image {name} is None. Image decoding failed.")            
+ 
                                         
                         
-                        # Decode the image data using OpenCV and append the resulting numpy array to the images list
-                        # Works like Image.open(image)
-                        cv2_image = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
-                        #create an Image
-                        original_image = Image.fromarray(cv2_image)
-                        
-                        self.image_names.add(name)                       
 
-                        yield original_image, name 
                 else:
                     print(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")                    
                         

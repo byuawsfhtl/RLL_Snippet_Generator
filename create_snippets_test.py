@@ -10,12 +10,14 @@ from io import StringIO
 
 class create_snippets_test(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/images.tar'
-        self.json_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/json.tar'
-        self.test_tarfile_path  = "V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/test.tar"
+        self.image_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/images.tar'
+        self.json_tar_path = 'C:/Users/gideo/Computer_Vision/Snippet_Generator/json.tar'
+        self.test_tarfile_path  = "C:/Users/gideo/Computer_Vision/Snippet_Generator/test.tar"
+        self.test_image_tarfile_path = "C:/Users/gideo/Computer_Vision/Snippet_Generator/test_image.tar"
         self.instance = snippet_generator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = "This is not JSON data."
-        self.sample_image = Image.open("V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/sample_image.jpg")
+        self.sample_image_path = "C:/Users/gideo/Computer_Vision/Snippet_Generator/sample_image.jpg"
+        self.sample_image = Image.open("C:/Users/gideo/Computer_Vision/Snippet_Generator/sample_image.jpg")
         # Create a sample JSON data and image for testing
         self.test_json_data = {
             'corners': [
@@ -23,6 +25,40 @@ class create_snippets_test(unittest.TestCase):
                 [0, 100], [100, 100], [100, 200]]
             ]
         }
+        
+    
+    def test_full_functionality(self):
+        # Create a sample tar file for testing
+        with tarfile.open(self.test_tarfile_path, 'w') as tar:
+            # Add a JSON file to the tarfile
+            json_data_str = json.dumps(self.test_json_data)
+            json_data_bytes = json_data_str.encode('utf-8')
+            json_member = tarfile.TarInfo(name='sample.json')
+            json_member.size = len(json_data_bytes)
+            tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
+        
+        # Add a sample image to the tarfile
+        with tarfile.open(self.test_image_tarfile_path, 'w') as tar:
+            image = Image.open(self.sample_image_path)
+            image_bytes = image.tobytes()
+            image_member = tarfile.TarInfo(name='sample.png')
+            image_member.size = len(image_bytes)
+            tar.addfile(image_member, fileobj=io.BytesIO(image_bytes))
+            
+
+        #Extract the json files from the json tar file
+        self.instance.extract_json(self.json_tar_path)
+        
+        
+        #Extract the image files from the image tar file
+        for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
+            #Using each image and its name, generate the snippets
+            for snippet, name in self.instance.image_snippet_generator(image, name):
+                snippet.show()
+                assert snippet is not None
+                assert name is not None
+                #Save the snippet
+                snippet.save(name)
         
     def test_make_snippets_pass(self):
         name = 'sample'
