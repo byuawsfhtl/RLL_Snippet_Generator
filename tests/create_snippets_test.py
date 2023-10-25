@@ -139,11 +139,6 @@ class create_snippets_test(unittest.TestCase):
 
         # Check that the 'name_to_json' dictionary is empty (no JSON data was added)
         self.assertEqual(expected_output, printed_output)
-            
-        
-        
-        
-        
         
 
 if __name__ == '__main__':

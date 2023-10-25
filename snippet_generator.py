@@ -15,11 +15,6 @@ import cv2
 
 
 class snippet_generator():
-    
-    image_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/images.tar'
-    json_tar_path = 'V:/RA_work_folders/Gideon_Jardine/Snippet_Generator/json.tar'
-    #global variables
-    
 
     #Constructor for this class
     def __init__(self, tar1, tar2): # Constructor
@@ -27,7 +22,6 @@ class snippet_generator():
         self.json_tar_path = tar2
         self.name_to_json = dict()
         self.image_names = set()
-        self.snippet_names = set()
         
     def image_snippet_generator(self, image, name):
         if name in self.name_to_json:
