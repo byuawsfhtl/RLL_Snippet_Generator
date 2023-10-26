@@ -30,36 +30,16 @@ class create_snippets_test(unittest.TestCase):
         }
         
     
-    def test_full_functionality(self):
-        # Create a sample tar file for testing
-        with tarfile.open(self.test_tarfile_path, 'w') as tar:
-            # Add a JSON file to the tarfile
-            json_data_str = json.dumps(self.test_json_data)
-            json_data_bytes = json_data_str.encode('utf-8')
-            json_member = tarfile.TarInfo(name='sample.json')
-            json_member.size = len(json_data_bytes)
-            tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
-        
-        # Add a sample image to the tarfile
-        with tarfile.open(self.test_image_tarfile_path, 'w') as tar:
-            image = Image.open(self.sample_image_path)
-            image_bytes = image.tobytes()
-            image_member = tarfile.TarInfo(name='sample.png')
-            image_member.size = len(image_bytes)
-            tar.addfile(image_member, fileobj=io.BytesIO(image_bytes))
-            
-
+    def test_full_functionality(self):         
         #Extract the json files from the json tar file
-        self.instance.extract_json(self.json_tar_path)      
-        
+        self.instance.extract_json(self.json_tar_path)     
         #Extract the image files from the image tar file
         for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
             # get the expected names
             expected_names = self.get_names(name)
             i = 0
-            #Using each image and its name, generate the snippets
+            # Using each image and its name, generate the snippets
             for snippet, name in self.instance.image_snippet_generator(image, name):
-                # snippet.show()
                 assert snippet is not None
                 self.assertEqual(name, expected_names[i])
                 i += 1
@@ -77,11 +57,7 @@ class create_snippets_test(unittest.TestCase):
             columns_and_rows = json_data['corners']
             names = []
             for i in range(len(columns_and_rows)-2):     
-                for j in range(len(columns_and_rows[0])-1):               
-                    if (i > 33) and (j > 48):
-                        print('stop here') 
-                    # Crop the image
-
+                for j in range(len(columns_and_rows[0])-1):
                     # Create a name for the image 
                     names.append(name + '_row_' + str(j) + '_col_' + str(i) + '.png')
             return names
