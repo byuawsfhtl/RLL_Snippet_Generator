@@ -38,7 +38,7 @@ class snippet_generator():
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image, name):
+    def image_snippet_generator(self, image, name, words, postclassification):
         """
         Generates image snippets from a given image and its corresponding json file.
 
@@ -54,6 +54,8 @@ class snippet_generator():
             columns_and_rows = json_data['corners']
             for i in range(len(columns_and_rows)-2):
                 for j in range(len(columns_and_rows[0])-1):
+                    if postclassification and (i,j) not in words:
+                        continue
                     left_top_corner = columns_and_rows[i][j]
                     right_top_corner = columns_and_rows[i+1][j]
                     bottom_right_corner = columns_and_rows[i+1][j+1]
