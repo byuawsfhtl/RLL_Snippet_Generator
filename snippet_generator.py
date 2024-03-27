@@ -68,7 +68,7 @@ class snippet_generator():
                     cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
 
                     # Create a name for the image
-                    cropped_image_name = f"{name}_row_{j}_col_{i}.png"
+                    cropped_image_name = f"{name}_row_{i}_col_{j}.png"
 
                     # Generate the snippet
                     yield cropped_image, cropped_image_name
