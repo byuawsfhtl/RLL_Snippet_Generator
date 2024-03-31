@@ -13,7 +13,7 @@ Instantiate classifier
 # imports
 import snippet_generator
 
-class SampleClass:
+class get_gender_snippets:
     """Sample class to demonstrate structure."""
 
     def __init__(self, parameter):
@@ -21,6 +21,7 @@ class SampleClass:
 
     def sample_method(self):
         """Sample method that does something."""
+        sg = snippet_generator
         pass
 
 
