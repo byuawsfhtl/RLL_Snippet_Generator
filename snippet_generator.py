@@ -38,7 +38,7 @@ class snippet_generator():
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image, name, words, postclassification):
+    def image_snippet_generator(self, image, name, desired_snippets, get_all_snippets):
         """
         Generates image snippets from a given image and its corresponding json file.
 
