@@ -54,7 +54,7 @@ class snippet_generator():
             columns_and_rows = json_data['corners']
             for i in range(len(columns_and_rows)-2):
                 for j in range(len(columns_and_rows[0])-1):
-                    if not get_all_snippets or (j,i) not in desired_snippets:  # should be 'or' not 'and', (j,i) not (i,j)
+                    if not get_all_snippets or (j,i) not in desired_snippets:
                         continue
                     left_top_corner = columns_and_rows[i][j]
                     right_top_corner = columns_and_rows[i+1][j]
@@ -70,7 +70,7 @@ class snippet_generator():
                     cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
 
                     # Create a name for the image
-                    cropped_image_name = f"{name}_row_{j}_col_{i}.png"  # row_j and col_i not inverse
+                    cropped_image_name = f"{name}_row_{j}_col_{i}.png"
 
                     # Generate the snippet
                     yield cropped_image, cropped_image_name
