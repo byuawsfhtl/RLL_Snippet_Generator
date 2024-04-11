@@ -8,7 +8,6 @@ import pandas as pd
 :returns: set. Set of tuples with locations to word snippets.
 """
 
-VERBOSE = False
 
 def get_word_locations_from_tsv(filename: str) -> set:
     wordLocationsSet = set()
@@ -19,5 +18,4 @@ def get_word_locations_from_tsv(filename: str) -> set:
     # create set of tuples
     locations = list(zip(words['row'], words['column']))
     wordLocationsSet.update(locations)
-    if VERBOSE: print(wordLocationsSet)
     return wordLocationsSet
