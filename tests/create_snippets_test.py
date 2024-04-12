@@ -6,34 +6,38 @@ import tarfile
 import json
 import sys
 from io import StringIO
+
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
-from snippet_generator import snippet_generator
+from ..snippet_generator import snippet_generator
 
-class create_snippets_test(unittest.TestCase):
+
+class SnippetGeneratorTests(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'tests/resources/images.tar'
-        self.json_tar_path = 'tests/resources/json.tar'
-        self.test_tarfile_path  = "tests/resources/test.tar"
-        self.test_image_tarfile_path = "tests/resources/test_image.tar"
+        self.image_tar_path = 'RLL_Snippet_Generator/tests/resources/images.tar'
+        self.json_tar_path = 'RLL_Snippet_Generator/tests/resources/json.tar'
+        self.test_tarfile_path = 'RLL_Snippet_Generator/tests/resources/test.tar'
+        self.test_image_tarfile_path = 'RLL_Snippet_Generator/tests/resources/test_image.tar'
         self.instance = snippet_generator(self.image_tar_path, self.json_tar_path)
-        self.test_text_data = "This is not JSON data."
-        self.sample_image_path = "tests/resources/sample_image.jpg"
+        self.test_text_data = 'This is not JSON data.'
+        self.sample_image_path = 'RLL_Snippet_Generator/tests/resources/sample_image.jpg'
         self.sample_image = Image.open(self.sample_image_path)
         # Create a sample JSON data and image for testing
         self.test_json_data = {
             'corners': [
                 [[0, 0], [100, 0], [100, 100],
-                [0, 100], [100, 100], [100, 200]]
+                 [0, 100], [100, 100], [100, 200]]
             ]
         }
-        
-    
-    def test_full_functionality(self):         
-        #Extract the json files from the json tar file
-        self.instance.extract_json(self.json_tar_path)     
-        #Extract the image files from the image tar file
+
+    def tearDown(self):
+        self.sample_image.close()
+
+    def test_full_functionality(self):
+        # Extract the json files from the json tar file
+        self.instance.extract_json(self.json_tar_path)
+        # Extract the image files from the image tar file
         for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
             # get the expected names
             expected_names = self.get_names(name)
@@ -43,8 +47,7 @@ class create_snippets_test(unittest.TestCase):
                 assert snippet is not None
                 self.assertEqual(name, expected_names[i])
                 i += 1
-                
-        
+
     def test_make_snippets_pass(self):
         name = 'sample'
         self.instance.name_to_json[name] = self.test_json_data
@@ -53,18 +56,17 @@ class create_snippets_test(unittest.TestCase):
             assert name is not None
 
     def get_names(self, name):
-            json_data = self.instance.name_to_json[name]
-            columns_and_rows = json_data['corners']
-            names = []
-            for i in range(len(columns_and_rows)-2):     
-                for j in range(len(columns_and_rows[0])-1):
-                    # Create a name for the image 
-                    names.append(name + '_row_' + str(j) + '_col_' + str(i) + '.png')
-            return names
-        
-            
+        json_data = self.instance.name_to_json[name]
+        columns_and_rows = json_data['corners']
+        names = []
+        for i in range(len(columns_and_rows) - 2):
+            for j in range(len(columns_and_rows[0]) - 1):
+                # Create a name for the image
+                names.append(name + '_row_' + str(j) + '_col_' + str(i) + '.png')
+        return names
+
     def test_fail_make_snippets(self):
-        #Redirect std out to catch print statements
+        # Redirect std out to catch print statements
         original_stdout = sys.stdout
         sys.stdout = StringIO()
         name = 'sample'
@@ -79,9 +81,8 @@ class create_snippets_test(unittest.TestCase):
         sys.stdout = original_stdout
 
         expected_output = "Image sample not found in the json file\n"
-        
+
         self.assertEqual(expected_output, printed_output)
-        
 
     def test_extract_json_from_tarfile(self):
         # Create a sample tar file for testing
@@ -100,9 +101,9 @@ class create_snippets_test(unittest.TestCase):
         self.assertIn('sample', self.instance.name_to_json)
         self.assertEqual(self.instance.name_to_json['sample'], self.test_json_data)
 
-    #Test that it does not work when a different file is passed in
+    # Test that it does not work when a different file is passed in
     def test_fail_extract_json_from_tarfile(self):
-        #Redirect std out to catch print statements
+        # Redirect std out to catch print statements
         original_stdout = sys.stdout
         sys.stdout = StringIO()
         # Create a sample tar file for testing with a non-JSON file
@@ -119,7 +120,6 @@ class create_snippets_test(unittest.TestCase):
             json_member = tarfile.TarInfo(name='sample.json')
             json_member.size = len(json_data_bytes)
             tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
-
 
         # Call the function to extract JSON data from the tarfile
         self.instance.extract_json(self.test_tarfile_path)

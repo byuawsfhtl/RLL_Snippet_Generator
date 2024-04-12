@@ -38,7 +38,7 @@ class snippet_generator():
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image, name, desired_snippets, get_all_snippets):
+    def image_snippet_generator(self, image, name, desired_snippets=None, get_all_snippets=True):
         """
         Generates image snippets from a given image and its corresponding json file.
 
@@ -52,14 +52,14 @@ class snippet_generator():
         if name in self.name_to_json:
             json_data = self.name_to_json[name]
             columns_and_rows = json_data['corners']
-            for i in range(len(columns_and_rows)-2):
-                for j in range(len(columns_and_rows[0])-1):
-                    if not get_all_snippets and (j,i) not in desired_snippets:
+            for col in range(len(columns_and_rows)-2):
+                for row in range(len(columns_and_rows[0])-1):
+                    if not get_all_snippets and (row,col) not in desired_snippets:
                         continue
-                    left_top_corner = columns_and_rows[i][j]
-                    right_top_corner = columns_and_rows[i+1][j]
-                    bottom_right_corner = columns_and_rows[i+1][j+1]
-                    bottom_left_corner = columns_and_rows[i][j+1]
+                    left_top_corner = columns_and_rows[col][row]
+                    right_top_corner = columns_and_rows[col+1][row]
+                    bottom_right_corner = columns_and_rows[col+1][row+1]
+                    bottom_left_corner = columns_and_rows[col][row+1]
 
                     left_side = min(left_top_corner[0], bottom_left_corner[0])
                     upper_side = min(left_top_corner[1], right_top_corner[1])
@@ -70,7 +70,7 @@ class snippet_generator():
                     cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
 
                     # Create a name for the image
-                    cropped_image_name = f"{name}_row_{j}_col_{i}.png"
+                    cropped_image_name = f"{name}_row_{row}_col_{col}.png"
 
                     # Generate the snippet
                     yield cropped_image, cropped_image_name
