@@ -10,7 +10,7 @@ from io import StringIO
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
-from ..snippet_generator import snippet_generator
+from ..SnippetGenerator import SnippetGenerator
 
 
 class SnippetGenerator_Tests(unittest.TestCase):
@@ -19,7 +19,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         self.json_tar_path = 'RLL_Snippet_Generator/tests/resources/json.tar'
         self.test_tarfile_path = 'RLL_Snippet_Generator/tests/resources/test.tar'
         self.test_image_tarfile_path = 'RLL_Snippet_Generator/tests/resources/test_image.tar'
-        self.instance = snippet_generator(self.image_tar_path, self.json_tar_path)
+        self.instance = SnippetGenerator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = 'This is not JSON data.'
         self.sample_image_path = 'RLL_Snippet_Generator/tests/resources/sample_image.jpg'
         self.sample_image = Image.open(self.sample_image_path)
@@ -43,9 +43,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
             expected_names = self.get_names(name)
             i = 0
             # Using each image and its name, generate the snippets
-            for snippet, name in self.instance.image_snippet_generator(image, name):
+            for snippet, snippet_name in self.instance.image_snippet_generator(image, name):
                 assert snippet is not None
-                self.assertEqual(name, expected_names[i])
+                self.assertEqual(snippet_name, expected_names[i])
                 i += 1
 
     def test_make_snippets_pass(self):

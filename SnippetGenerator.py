@@ -1,17 +1,10 @@
-'''
-This script takes an image and image directory files from a tarfile and a directory of json files that came from those images.
+"""
+This script takes an image and image directory files from a tarfile
+and a directory of json files that came from those images.
 It links the json to the images via a map.
-It then opens each image and creates snippets of the image based on the corner points in the json file. 
-'''
+It then opens each image and creates snippets of the image based on the corner points in the json file.
+"""
 
-from PIL import Image
-import os
-import imghdr
-import json
-import io
-import numpy as np
-import tarfile as tf
-import cv2
 import tarfile as tf
 import json
 import numpy as np
@@ -19,9 +12,10 @@ import cv2
 from PIL import Image
 
 
-class snippet_generator():
+class SnippetGenerator:
     """
-    This class generates image snippets from a tar file containing images and a tar file containing json files with corner points.
+    This class generates image snippets from a tar file containing images
+    and a tar file containing json files with corner points.
     """
     # Constructor for this class
 
@@ -54,7 +48,7 @@ class snippet_generator():
             columns_and_rows = json_data['corners']
             for col in range(len(columns_and_rows)-2):
                 for row in range(len(columns_and_rows[0])-1):
-                    if not get_all_snippets and (row,col) not in desired_snippets:
+                    if not get_all_snippets and (row, col) not in desired_snippets:
                         continue
                     left_top_corner = columns_and_rows[col][row]
                     right_top_corner = columns_and_rows[col+1][row]
@@ -91,12 +85,12 @@ class snippet_generator():
         with tf.open(image_path, mode='r') as tar_file:
             # Iterate through each member of the tarfile
             for member in tar_file:
-                type = member.name.split('.')[-1]
+                extension = member.name.split('.')[-1]
                 name = member.name.split('.')[0]
                 if name in self.image_names:
                     continue
                 # If it is an image decode it and create the snippets
-                if type in set_of_img_extensions and len(self.name_to_json) > 0:
+                if extension in set_of_img_extensions and len(self.name_to_json) > 0:
                     # Check if the image name is in the json file
                     if name in self.name_to_json:
                         # Extract the image data from the tarfile

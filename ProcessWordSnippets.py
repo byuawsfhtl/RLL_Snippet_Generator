@@ -1,6 +1,6 @@
 from RLL_Snippet_Generator import WordSnippetLocation as WSL
 import os
-import RLL_Snippet_Generator.snippet_generator as SG
+import RLL_Snippet_Generator.SnippetGenerator as SG
 
 """ Takes paths to the snippets tsv directory, the image tar directory, and the image json tar directory
 and generates the snippet images then saves them in directories within the parent baseDir directory.
@@ -17,7 +17,7 @@ class ProcessWordSnippets:
     @staticmethod
     def process_word_snippets(snippetsTsvDir_path: str, imagesTar_path: str, jsonsTar_path: str,
                               outputDir_path: str) -> None:
-        sg = SG.snippet_generator(imagesTar_path, jsonsTar_path)
+        sg = SG.SnippetGenerator(imagesTar_path, jsonsTar_path)
         tsvSet = os.listdir(snippetsTsvDir_path)
 
         if not (os.path.exists(outputDir_path)):
