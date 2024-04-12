@@ -10,7 +10,7 @@ from io import StringIO
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
-from ..SnippetGenerator import SnippetGenerator
+from SnippetGenerator import SnippetGenerator
 
 
 class SnippetGenerator_Tests(unittest.TestCase):

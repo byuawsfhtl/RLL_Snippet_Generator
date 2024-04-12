@@ -1,6 +1,8 @@
-from RLL_Snippet_Generator import WordSnippetLocation as WSL
+import sys
 import os
-import RLL_Snippet_Generator.SnippetGenerator as SG
+
+import SnippetGenerator as SG
+import WordSnippetLocation as WSL
 
 """ Takes paths to the snippets tsv directory, the image tar directory, and the image json tar directory
 and generates the snippet images then saves them in directories within the parent baseDir directory.

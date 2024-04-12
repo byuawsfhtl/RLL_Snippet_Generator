@@ -1,5 +1,11 @@
 import unittest
-from .. import WordSnippetLocation as WSL
+import os
+import sys
+
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+import WordSnippetLocation as WSL
 
 
 class TestWordLocationFunction(unittest.TestCase):
@@ -25,3 +31,6 @@ class TestWordLocationFunction(unittest.TestCase):
 
     def test_getWordLocations_noFile(self):
         self.assertRaises(Exception, WSL.get_word_locations_from_tsv, self.no_file)
+
+if __name__ == "__main__":
+    unittest.main()

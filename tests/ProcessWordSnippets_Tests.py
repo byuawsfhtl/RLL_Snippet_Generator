@@ -1,9 +1,14 @@
 import unittest
-from .. import ProcessWordSnippets as Pws
 import os
+import sys
+
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+import ProcessWordSnippets as Pws
 
 
-class ProcessWordSnippetsTests(unittest.TestCase):
+class ProcessWordSnippetsTestss(unittest.TestCase):
     def setUp(self):
         self.image_tar_path = 'tests/resources/images.tar'
         self.json_tar_path = 'tests/resources/json.tar'
@@ -22,3 +27,6 @@ class ProcessWordSnippetsTests(unittest.TestCase):
         pws = Pws.ProcessWordSnippets()
         self.assertRaises(Exception, pws.process_word_snippets, self.no_path, self.no_path, self.no_path,
                           self.output_dir)
+
+if __name__ == "__main__":
+    unittest.main()
