@@ -13,7 +13,7 @@ sys.path.append(parent)
 from ..snippet_generator import snippet_generator
 
 
-class SnippetGeneratorTests(unittest.TestCase):
+class SnippetGenerator_Tests(unittest.TestCase):
     def setUp(self):
         self.image_tar_path = 'RLL_Snippet_Generator/tests/resources/images.tar'
         self.json_tar_path = 'RLL_Snippet_Generator/tests/resources/json.tar'
