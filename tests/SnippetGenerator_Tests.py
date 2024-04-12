@@ -15,13 +15,13 @@ from ..SnippetGenerator import SnippetGenerator
 
 class SnippetGenerator_Tests(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'RLL_Snippet_Generator/tests/resources/images.tar'
-        self.json_tar_path = 'RLL_Snippet_Generator/tests/resources/json.tar'
-        self.test_tarfile_path = 'RLL_Snippet_Generator/tests/resources/test.tar'
-        self.test_image_tarfile_path = 'RLL_Snippet_Generator/tests/resources/test_image.tar'
+        self.image_tar_path = 'tests/resources/images.tar'
+        self.json_tar_path = 'tests/resources/json.tar'
+        self.test_tarfile_path = 'tests/resources/test.tar'
+        self.test_image_tarfile_path = 'tests/resources/test_image.tar'
         self.instance = SnippetGenerator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = 'This is not JSON data.'
-        self.sample_image_path = 'RLL_Snippet_Generator/tests/resources/sample_image.jpg'
+        self.sample_image_path = 'tests/resources/sample_image.jpg'
         self.sample_image = Image.open(self.sample_image_path)
         # Create a sample JSON data and image for testing
         self.test_json_data = {

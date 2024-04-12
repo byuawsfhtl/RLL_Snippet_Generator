@@ -4,9 +4,9 @@ from .. import WordSnippetLocation as WSL
 
 class TestWordLocationFunction(unittest.TestCase):
     def setUp(self):
-        self.success1_file = 'RLL_Snippet_Generator/tests/resources/wordSnippetLocation_test1.tsv'
-        self.success2_file = 'RLL_Snippet_Generator/tests/resources/wordSnippetLocation_test2.tsv'
-        self.fail1_file = 'RLL_Snippet_Generator/tests/resources/wordSnippetLocation_fail1.tsv'
+        self.success1_file = 'tests/resources/wordSnippetLocation_test1.tsv'
+        self.success2_file = 'tests/resources/wordSnippetLocation_test2.tsv'
+        self.fail1_file = 'tests/resources/wordSnippetLocation_fail1.tsv'
         self.no_file = './not_a_valid_file.tsv'
         # if not get_all_snippets:
             # if i,j not in desired_snippets
