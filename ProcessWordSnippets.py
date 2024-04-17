@@ -7,10 +7,10 @@ import WordSnippetLocation as WSL
 """ Takes paths to the snippets tsv directory, the image tar directory, and the image json tar directory
 and generates the snippet images then saves them in directories within the parent baseDir directory.
 
-:param snippetsTsvDir_path: path to the snippets tsv directory.
-:param imagesTsv_path: path to the image tar directory.
-:param jsonsTar_path: path to the image json tar directory.
-:param outputDir_path: path for output directory.
+:param snippetsTsvDir_path: str. Path to the snippets tsv directory.
+:param imagesTsv_path: str. Path to the image tar directory.
+:param jsonsTar_path: str. Path to the image json tar directory.
+:param outputDir_path: str. Path for output directory.
 
 """
 

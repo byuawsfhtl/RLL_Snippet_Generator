@@ -10,6 +10,7 @@ import json
 import numpy as np
 import cv2
 from PIL import Image
+from typing import Tuple
 
 
 class SnippetGenerator:
@@ -32,13 +33,15 @@ class SnippetGenerator:
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image, name, desired_snippets=None, get_all_snippets=True):
+    def image_snippet_generator(self, image: Image, name: str, desired_snippets: set=None, get_all_snippets: bool=True) -> Image:
         """
         Generates image snippets from a given image and its corresponding json file.
 
         Args:
-        image (PIL.Image): The image to generate snippets from.
-        name (str): The name of the image.
+        image: PIL.Image. The image to generate snippets from.
+        name: str. The name of the image.
+        _desired_snippets_: set. A list of snippets that the user wants. Optional, defaults to none.
+        _get_all_snippets_: bool. True if user wants to recieve all snippets. Optional, defaults to true.
 
         Yields:
         tuple: A tuple containing the cropped image and its name.
@@ -71,7 +74,7 @@ class SnippetGenerator:
         else:
             print(f"Image {name} not found in the json file")
 
-    def image_from_tar_generator(self, image_path):
+    def image_from_tar_generator(self, image_path: str) -> Tuple[Image.Image, str]:
         """
         Generates images from a tar file containing images.
 
@@ -114,7 +117,7 @@ class SnippetGenerator:
                 else:
                     print(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")
 
-    def extract_json(self, input_path):
+    def extract_json(self, input_path: str) -> None:
         """
         Extracts json files from a tar file and stores them in a dictionary.
 
