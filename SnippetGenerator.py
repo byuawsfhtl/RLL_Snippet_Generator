@@ -1,27 +1,22 @@
-'''
-This script takes an image and image directory files from a tarfile and a directory of json files that came from those images.
+"""
+This script takes an image and image directory files from a tarfile
+and a directory of json files that came from those images.
 It links the json to the images via a map.
-It then opens each image and creates snippets of the image based on the corner points in the json file. 
-'''
+It then opens each image and creates snippets of the image based on the corner points in the json file.
+"""
 
-from PIL import Image
-import os
-import imghdr
-import json
-import io
-import numpy as np
-import tarfile as tf
-import cv2
 import tarfile as tf
 import json
 import numpy as np
 import cv2
 from PIL import Image
+from typing import Tuple
 
 
-class snippet_generator():
+class SnippetGenerator:
     """
-    This class generates image snippets from a tar file containing images and a tar file containing json files with corner points.
+    This class generates image snippets from a tar file containing images
+    and a tar file containing json files with corner points.
     """
     # Constructor for this class
 
@@ -38,13 +33,15 @@ class snippet_generator():
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image, name, desired_snippets, get_all_snippets):
+    def image_snippet_generator(self, image: Image.Image, name: str, desired_snippets: set=None, get_all_snippets: bool=True) -> Image.Image:
         """
         Generates image snippets from a given image and its corresponding json file.
 
         Args:
-        image (PIL.Image): The image to generate snippets from.
-        name (str): The name of the image.
+        image: PIL.Image.Image. The image to generate snippets from.
+        name: str. The name of the image.
+        _desired_snippets_: set. A list of snippets that the user wants. Optional, defaults to none.
+        _get_all_snippets_: bool. True if user wants to recieve all snippets. Optional, defaults to true.
 
         Yields:
         tuple: A tuple containing the cropped image and its name.
@@ -52,14 +49,14 @@ class snippet_generator():
         if name in self.name_to_json:
             json_data = self.name_to_json[name]
             columns_and_rows = json_data['corners']
-            for i in range(len(columns_and_rows)-2):
-                for j in range(len(columns_and_rows[0])-1):
-                    if not get_all_snippets and (j,i) not in desired_snippets:
+            for col in range(len(columns_and_rows)-2):
+                for row in range(len(columns_and_rows[0])-1):
+                    if not get_all_snippets and (row, col) not in desired_snippets:
                         continue
-                    left_top_corner = columns_and_rows[i][j]
-                    right_top_corner = columns_and_rows[i+1][j]
-                    bottom_right_corner = columns_and_rows[i+1][j+1]
-                    bottom_left_corner = columns_and_rows[i][j+1]
+                    left_top_corner = columns_and_rows[col][row]
+                    right_top_corner = columns_and_rows[col+1][row]
+                    bottom_right_corner = columns_and_rows[col+1][row+1]
+                    bottom_left_corner = columns_and_rows[col][row+1]
 
                     left_side = min(left_top_corner[0], bottom_left_corner[0])
                     upper_side = min(left_top_corner[1], right_top_corner[1])
@@ -70,14 +67,14 @@ class snippet_generator():
                     cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
 
                     # Create a name for the image
-                    cropped_image_name = f"{name}_row_{j}_col_{i}.png"
+                    cropped_image_name = f"{name}_row_{row}_col_{col}.png"
 
                     # Generate the snippet
                     yield cropped_image, cropped_image_name
         else:
             print(f"Image {name} not found in the json file")
 
-    def image_from_tar_generator(self, image_path):
+    def image_from_tar_generator(self, image_path: str) -> Tuple[Image.Image, str]:
         """
         Generates images from a tar file containing images.
 
@@ -91,12 +88,12 @@ class snippet_generator():
         with tf.open(image_path, mode='r') as tar_file:
             # Iterate through each member of the tarfile
             for member in tar_file:
-                type = member.name.split('.')[-1]
+                extension = member.name.split('.')[-1]
                 name = member.name.split('.')[0]
                 if name in self.image_names:
                     continue
                 # If it is an image decode it and create the snippets
-                if type in set_of_img_extensions and len(self.name_to_json) > 0:
+                if extension in set_of_img_extensions and len(self.name_to_json) > 0:
                     # Check if the image name is in the json file
                     if name in self.name_to_json:
                         # Extract the image data from the tarfile
@@ -120,7 +117,7 @@ class snippet_generator():
                 else:
                     print(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")
 
-    def extract_json(self, input_path):
+    def extract_json(self, input_path: str) -> None:
         """
         Extracts json files from a tar file and stores them in a dictionary.
 
