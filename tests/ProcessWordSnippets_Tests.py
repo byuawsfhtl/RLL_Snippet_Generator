@@ -10,7 +10,7 @@ sys.path.append(parent)
 import ProcessWordSnippets as Pws
 
 
-class ProcessWordSnippetsTestss(unittest.TestCase):
+class ProcessWordSnippets_Tests(unittest.TestCase):
     def setUp(self):
         self.image_tar_path = 'tests/resources/images.tar'
         self.json_tar_path = 'tests/resources/json.tar'
