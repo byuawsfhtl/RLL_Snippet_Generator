@@ -33,12 +33,12 @@ class SnippetGenerator:
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image: Image, name: str, desired_snippets: set=None, get_all_snippets: bool=True) -> Image:
+    def image_snippet_generator(self, image: Image.Image, name: str, desired_snippets: set=None, get_all_snippets: bool=True) -> Image.Image:
         """
         Generates image snippets from a given image and its corresponding json file.
 
         Args:
-        image: PIL.Image. The image to generate snippets from.
+        image: PIL.Image.Image. The image to generate snippets from.
         name: str. The name of the image.
         _desired_snippets_: set. A list of snippets that the user wants. Optional, defaults to none.
         _get_all_snippets_: bool. True if user wants to recieve all snippets. Optional, defaults to true.
