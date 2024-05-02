@@ -1,0 +1,17 @@
+name: general
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+# General dependencies
+  - python=3.12
+  - numpy
+  - pandas
+  - py-opencv
+  - pillow
+  - dask
+  - tqdm
+  - pyarrow
+  - mlflow
+  - pyyaml
+# additional dependencies

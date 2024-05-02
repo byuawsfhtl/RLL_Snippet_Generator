@@ -3,9 +3,10 @@ import os
 import sys
 
 current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
-sys.path.append(parent)
-import WordSnippetLocation as WSL
+testFolder = os.path.dirname(current)
+root = os.path.dirname(testFolder)
+sys.path.append(os.path.join(root, 'src'))
+import WordSnippetLocation as WSL  # noqa: E402
 
 
 class TestWordLocationFunction(unittest.TestCase):

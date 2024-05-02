@@ -1,9 +1,30 @@
-name: Code Quality
-run-name: Code Quality
-on: [push, pull_request]
+name: Lint and Format
+
+on: 
+  push:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+    paths-ignore: # Pushes that include only these changed files won't trigger actions
+      - "**/README.md"
+      - "**/.gitignore"
+      - "**/doc/*"
+
 jobs:
   code-quality:
     name: Code Quality
+    runs-on: ubuntu-latest
+    strategy: 
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check Formatting
+        run: ruff format --check
+      - name: Check Lint
+        run: ruff lint
+
+  auto-tests:
+    name: Auto Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -13,12 +34,5 @@ jobs:
         with:
           activate-environment: test-env
           environment-file: environment.yml
-      - name: Check Formatting
-        run: ruff format --check
-      - name: Check Lint
-        run: ruff lint
       - name: Run Tests with coverage
         run: python -m coverage run -m unittest discover
-
-      
-            

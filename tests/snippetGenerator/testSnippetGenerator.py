@@ -8,9 +8,10 @@ import sys
 from io import StringIO
 
 current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
-sys.path.append(parent)
-from SnippetGenerator import SnippetGenerator
+testFolder = os.path.dirname(current)
+root = os.path.dirname(testFolder)
+sys.path.append(os.path.join(root, 'src'))
+from SnippetGenerator import SnippetGenerator  # noqa: E402
 
 
 class SnippetGenerator_Tests(unittest.TestCase):
