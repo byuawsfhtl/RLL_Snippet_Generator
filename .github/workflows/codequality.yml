@@ -26,7 +26,7 @@ jobs:
           activate-environment: test-env
           environment-file: environment.yml
       - name: Install Ruff
-        run: mam install -y -c conda-forge ruff 
+        run: mamba install -y -c conda-forge ruff 
       - name: Check Formatting
         run: ruff format --check
       - name: Check Lint
