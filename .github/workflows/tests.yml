@@ -1,7 +1,7 @@
 name: Tests
 
 on: 
-#   push: # REMOVE THIS AFTER DEBUGGING GH ACTIONS
+  push: # REMOVE THIS AFTER DEBUGGING GH ACTIONS
   pull_request:
     types: [opened, reopened, synchronize, edited]
     paths-ignore: # Pushes that include only these changed files won't trigger actions
