@@ -2,12 +2,6 @@ name: Lint and Format
 
 on: 
   push:
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
-    paths-ignore: # Pushes that include only these changed files won't trigger actions
-      - "**/README.md"
-      - "**/.gitignore"
-      - "**/doc/*"
 
 jobs:
   code-quality:
