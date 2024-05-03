@@ -33,4 +33,4 @@ jobs:
       - name: Check Formatting
         run: ruff format --check
       - name: Check Lint
-        run: ruff lint
+        run: ruff check .
