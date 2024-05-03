@@ -2,7 +2,7 @@ name: Tests
 
 on: 
   pull_request:
-    types: [opened, reopened, synchronize, edited]
+    types: [opened, reopened, synchronize, edited] 
     paths-ignore: # Pushes that include only these changed files won't trigger actions
       - "**/README.md"
       - "**/.gitignore"
@@ -14,7 +14,9 @@ jobs:
         runs-on: ubuntu-latest
         defaults:
             run:
-              shell: bash -el {0}
+              shell: bash -el {0}  # Use bash shell with -e and -l flags
+                                   # -e: Exit immediately if a command exits with a non-zero status
+                                   # -l: Make bash act as if it had been invoked as a login shell (activates conda/mamba)
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -32,16 +34,19 @@ jobs:
               run: echo "today=$(/bin/date -u '+%Y%m%d')" >> $GITHUB_OUTPUT
               shell: bash
             - name: Cache Conda env
-              uses: actions/cache@v3
+              uses: actions/cache@v3  # Cache the conda env on github / load from cache if available
               with:
                 path: ${{ env.CONDA }}/envs
                 key:
                   conda-${{ runner.os }}--${{ runner.arch }}--${{steps.get-date.outputs.today }}-${{hashFiles('environment.yml') }}-${{ env.CACHE_NUMBER}}
+                  # The key is a unique identifier for the cache. It is based on the OS, architecture, date, environment file, and cache number
               env:
-                # Increase this value to reset cache if etc/example-environment.yml has not changed
+                # Increase this value if you need to manually invalidate the cache
                 CACHE_NUMBER: 0
               id: cache
+
             - name: Update environment
+              # Only update the environment if the cache was not hit
               if: steps.cache.outputs.cache-hit != 'true'
               run:
                 mamba env update -n test-env -f environment.yml
@@ -50,14 +55,14 @@ jobs:
             - name: Install coverage
               run: mamba install -y -c conda-forge coverage
             - name: Run Tests with coverage
-              run: coverage run -m unittest discover
+              run: coverage run -m unittest discover  # tests must be discoverable by unittest. (follow the naming convention test_*.py, and be importable from the root of the repository)
             - name: Generate Coverage Report
-              run: coverage xml -o coverage.xml
+              run: coverage xml -o coverage.xml  # generates a coverage report in XML format
             - name: Add coverage report to PR
               uses: orgoro/coverage@v3.1
               with:
                   coverageFile: coverage.xml
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  thresholdAll: 0.8
-                  thresholdNew: 0.9
-                  thresholdModified: 0.9
+                  token: ${{ secrets.GITHUB_TOKEN }}  # required to post the coverage report to the PR
+                  thresholdAll: 0.8  # Set the coverage threshold for the entire project
+                  thresholdNew: 0.9  # Set the threshold for new code
+                  thresholdModified: 0.9  # Set the threshold for modified code
