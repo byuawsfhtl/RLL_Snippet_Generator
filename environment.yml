@@ -7,8 +7,7 @@ dependencies:
   - python=3.12
   - numpy
   - pandas
-  - py-opencv
-  - libopencv
+  - fastai::opencv-python-headless
   - pillow
   - dask
   - tqdm
