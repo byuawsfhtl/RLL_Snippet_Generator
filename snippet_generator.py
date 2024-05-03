@@ -6,7 +6,7 @@ It then opens each image and creates snippets of the image based on the corner p
 
 from PIL import Image
 import os
-import imghdr
+# import imghdr
 import json
 import io
 import numpy as np
@@ -120,20 +120,43 @@ class snippet_generator():
 
     def extract_json(self, input_path):
         """
-        Extracts json files from a tar file and stores them in a dictionary.
+        Extracts json files from a tar/zip file and stores them in a dictionary.
+
 
         Args:
-        input_path (str): The path to the tar file containing json files.
+        input_path (str): The path to the tar/zip file containing json files.
         """
-        with tf.open(input_path, mode='r') as tar_file:
+       
+        if input_path.endswith('.tar'):
+            with tf.open(input_path, mode='r') as tar_file:
             # Iterate through each member of the tarfile
-            for member in tar_file:
-                name = member.name.split('.')[0]
-                # If it is a json file extract it and store it in a dictionary
-                if member.isfile() and member.name.endswith('.json'):
-                    json_data = tar_file.extractfile(member)
-                    dict_with_corner_points = json.load(json_data)
-                    self.name_to_json[name] = dict_with_corner_points
-                    # print(member)
-                else:
-                    print(f"Wrong file type. File name was {name}. Please ensure that the tar includes only JSON files")
+                for member in tar_file: # .getmembers():
+                    name = member.name.split('.')[0]
+                    # If it is a json file extract it and store it in a dictionary
+                    if member.isfile() and member.name.endswith('.json'):
+                        # with tar_file.extractfile(member) as json_data:
+                        #     self.name_to_json[member.name] = json.load(json_data)
+                        json_data = tar_file.extractfile(member)
+                        dict_with_corner_points = json.load(json_data)
+                        self.name_to_json[name] = dict_with_corner_points
+                        # print(member)
+                    else:
+                        print(f"Wrong file type. File name was {name}. Please ensure that the tar includes only JSON files")
+
+        elif input_path.endswith('.zip'):
+            with zf.ZipFile(input_path, 'r') as zip_file:
+                # Iterate through each member of the zipfile
+                for member in zip_file.namelist():
+                    # Check if it's a JSON file and not a directory
+                    if not member.endswith('/') and member.endswith('.json'):
+                        # Remove only the ".json" extension to get the name
+                        name = member.rsplit('.json', 1)[0]
+                        # Proceed to load the JSON file
+                        with zip_file.open(member) as json_data:
+                            dict_with_corner_points = json.load(json_data)
+                            self.name_to_json[name] = dict_with_corner_points
+                    else:
+                            print(f"Wrong file type. File name was {name}. Please ensure that the tar includes only JSON files")
+
+        else:
+            return f"The file {input_path} does not have a .zip or .tar extension."
