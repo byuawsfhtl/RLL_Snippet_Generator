@@ -21,15 +21,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v3.0.4
-        with:
-          mamba-version: "*"
-          channels: conda-forge,defaults
-          activate-environment: test-env
-          environment-file: environment.yml
+
       - name: Install Ruff
-        run: mamba install -y -c conda-forge ruff 
+        run: pip install ruff 
       - name: Check Formatting
         run: ruff format --check
       - name: Check Lint
