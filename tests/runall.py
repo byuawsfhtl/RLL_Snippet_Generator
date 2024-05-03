@@ -8,7 +8,7 @@ src = os.path.join(root, "src")
 sys.path.append(src)
 sys.path.append(root)
 
-from tests.discover import test_suite_from_recursive_discover
+from tests.discover import test_suite_from_recursive_discover # noqa E402
 
 if __name__ == "__main__":
     """Main function for running all tests in the tests folder."""
