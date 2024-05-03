@@ -22,4 +22,5 @@ def test_suite_from_recursive_discover(folder, pattern):
         unittest.TestLoader().discover(start_dir=d, pattern=pattern) for d in test_dirs
     ]
     suite = unittest.TestSuite(suites)
+    print("test adding lines in github")
     return suite
