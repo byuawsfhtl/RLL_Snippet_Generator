@@ -12,10 +12,10 @@ import pandas as pd
 def get_word_locations_from_tsv(filename: str) -> set:
     wordLocationsSet = set()
     # read tsv file to dataframe
-    data = pd.read_csv(filename, sep='\t', header=0)
+    data = pd.read_csv(filename, sep="\t", header=0)
     # filter to 'word' type
-    words = data.loc[data['type'] == 'word']
+    words = data.loc[data["type"] == "word"]
     # create set of tuples
-    locations = list(zip(words['row'], words['column']))
+    locations = list(zip(words["row"], words["column"]))
     wordLocationsSet.update(locations)
     return wordLocationsSet

@@ -1,0 +1,21 @@
+name: Lint and Format
+
+on: 
+  push:  # runs the jobs on every push
+
+jobs:
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest  # uses the linux runtime
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4  # checks out the repository
+
+      - name: Install Ruff
+        run: pip install ruff  # installs the Ruff linting package
+
+      - name: Check Lint
+        run: ruff check .  # checks all files in the repository for linting errors
+
+      - name: Check Formatting
+        run: ruff format --check  # checks all files in the repository for formatting errors

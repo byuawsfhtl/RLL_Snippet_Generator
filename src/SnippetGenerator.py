@@ -21,6 +21,7 @@ class SnippetGenerator:
     This class generates image snippets from a tar file containing images
     and a tar file containing json files with corner points.
     """
+
     # Constructor for this class
 
     def __init__(self, tar1, tar2):
@@ -36,7 +37,13 @@ class SnippetGenerator:
         self.name_to_json = dict()
         self.image_names = set()
 
-    def image_snippet_generator(self, image: Image.Image, name: str, desired_snippets: set=None, get_all_snippets: bool=True) -> Image.Image:
+    def image_snippet_generator(
+        self,
+        image: Image.Image,
+        name: str,
+        desired_snippets: set = None,
+        get_all_snippets: bool = True,
+    ) -> Image.Image:
         """
         Generates image snippets from a given image and its corresponding json file.
 
@@ -51,15 +58,15 @@ class SnippetGenerator:
         """
         if name in self.name_to_json:
             json_data = self.name_to_json[name]
-            columns_and_rows = json_data['corners']
-            for col in range(len(columns_and_rows)-2):
-                for row in range(len(columns_and_rows[0])-1):
+            columns_and_rows = json_data["corners"]
+            for col in range(len(columns_and_rows) - 2):
+                for row in range(len(columns_and_rows[0]) - 1):
                     if not get_all_snippets and (row, col) not in desired_snippets:
                         continue
                     left_top_corner = columns_and_rows[col][row]
-                    right_top_corner = columns_and_rows[col+1][row]
-                    bottom_right_corner = columns_and_rows[col+1][row+1]
-                    bottom_left_corner = columns_and_rows[col][row+1]
+                    right_top_corner = columns_and_rows[col + 1][row]
+                    bottom_right_corner = columns_and_rows[col + 1][row + 1]
+                    bottom_left_corner = columns_and_rows[col][row + 1]
 
                     left_side = min(left_top_corner[0], bottom_left_corner[0])
                     upper_side = min(left_top_corner[1], right_top_corner[1])
@@ -67,7 +74,9 @@ class SnippetGenerator:
                     lower_side = max(bottom_right_corner[1], bottom_left_corner[1]) + 3
 
                     # Crop the image
-                    cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
+                    cropped_image = image.crop(
+                        (left_side, upper_side, right_side, lower_side)
+                    )
 
                     # Create a name for the image
                     cropped_image_name = f"{name}_row_{row}_col_{col}.png"
@@ -87,12 +96,12 @@ class SnippetGenerator:
         Yields:
         tuple: A tuple containing the original image and its name.
         """
-        set_of_img_extensions = {'png', 'jpg', 'jpeg', 'jp2', 'tif', 'tiff'}
-        with tf.open(image_path, mode='r') as tar_file:
+        set_of_img_extensions = {"png", "jpg", "jpeg", "jp2", "tif", "tiff"}
+        with tf.open(image_path, mode="r") as tar_file:
             # Iterate through each member of the tarfile
             for member in tar_file:
-                extension = member.name.split('.')[-1]
-                name = member.name.split('.')[0]
+                extension = member.name.split(".")[-1]
+                name = member.name.split(".")[0]
                 if name in self.image_names:
                     continue
                 # If it is an image decode it and create the snippets
@@ -101,7 +110,9 @@ class SnippetGenerator:
                     if name in self.name_to_json:
                         # Extract the image data from the tarfile
                         img_data = np.asarray(
-                            bytearray(tar_file.extractfile(member).read()), dtype=np.uint8)
+                            bytearray(tar_file.extractfile(member).read()),
+                            dtype=np.uint8,
+                        )
 
                         # Decode the image file
                         cv2_image = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
@@ -118,7 +129,9 @@ class SnippetGenerator:
                             print(f"cv2_image {name} is None. Image decoding failed.")
 
                 else:
-                    print(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")
+                    print(
+                        f"Wrong file type. File was {name}. Please ensure that the tar includes only image files"
+                    )
 
     def extract_json(self, input_path: str) -> None:
         """
@@ -162,3 +175,4 @@ class SnippetGenerator:
 
         else:
             return f"The file {input_path} does not have a .zip or .tar extension."
+
