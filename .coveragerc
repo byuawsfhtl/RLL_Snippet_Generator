@@ -18,7 +18,10 @@ exclude_lines =
 
 [run]
 omit = 
+    # ignore temporary opencv config files
     config.py
     config-3.py
+
+    # ignore local test runners
     discover.py
     runall.py
