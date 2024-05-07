@@ -16,13 +16,13 @@ from SnippetGenerator import SnippetGenerator  # noqa: E402
 
 class SnippetGenerator_Tests(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/iowa_image.tar"
-        self.json_tar_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/iowa_json.tar"
-        self.test_tarfile_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/test.tar"
-        self.test_image_tarfile_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/test_image.tar"
+        self.image_tar_path = "tests/resources/iowa_image.tar"
+        self.json_tar_path = "tests/resources/iowa_json.tar"
+        self.test_tarfile_path = "tests/resources/test.tar"
+        self.test_image_tarfile_path = "tests/resources/test_image.tar"
         self.instance = SnippetGenerator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = "This is not JSON data."
-        self.sample_image_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/sample_image.jpg"
+        self.sample_image_path = "tests/resources/sample_image.jpg"
 
         self.sample_image = Image.open(self.sample_image_path)
         # Create a sample JSON data and image for testing
@@ -34,7 +34,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
     def tearDown(self):
         self.sample_image.close()
-        directory = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
+        directory = "tests/resources/output"
         # List all files in the directory
         if not os.path.exists(directory):
             return
@@ -49,15 +49,13 @@ class SnippetGenerator_Tests(unittest.TestCase):
             except OSError as e:
                 # If file deletion fails, print the error message
                 print("Error: {} - {}".format(e.filename, e.strerror))
-        os.rmdir(
-            "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
-        )
+        os.rmdir("tests/resources/output")
 
     def test_full_functionality(self):
         # Extract the json files from the json tar file
         self.instance.extract_json(self.json_tar_path)
 
-        output_dir = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
+        output_dir = "tests/resources/output"
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
         # Extract the image files from the image tar file
