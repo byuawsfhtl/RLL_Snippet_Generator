@@ -4,14 +4,12 @@ and a directory of json files that came from those images.
 It links the json to the images via a map.
 It then opens each image and creates snippets of the image based on the corner points in the json file.
 """
-
 import tarfile as tf
 import json
 import numpy as np
 import cv2
 from PIL import Image
 from typing import Tuple
-
 
 class SnippetGenerator:
     """
@@ -69,18 +67,14 @@ class SnippetGenerator:
                         right_top_corner = columns_and_rows[col+1][row]
                         bottom_right_corner = columns_and_rows[col+1][row+1]
                         bottom_left_corner = columns_and_rows[col][row+1]
-
                         left_side = min(left_top_corner[0], bottom_left_corner[0])
                         upper_side = min(left_top_corner[1], right_top_corner[1])
                         right_side = max(bottom_right_corner[0], right_top_corner[0])
                         lower_side = max(bottom_right_corner[1], bottom_left_corner[1]) + 3
-
                         # Crop the image
                         cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
-
                         # Create a name for the image
                         cropped_image_name = f"{table['label']}_row_{row}_col_{col}.png"
-
                         # Generate the snippet
                         yield cropped_image, cropped_image_name
         else:
@@ -113,16 +107,12 @@ class SnippetGenerator:
                             bytearray(tar_file.extractfile(member).read()),
                             dtype=np.uint8,
                         )
-
                         # Decode the image file
                         cv2_image = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
-
                         if cv2_image is not None:
                             # Create an Image
                             original_image = Image.fromarray(cv2_image)
-
                             self.image_names.add(name)
-
                             yield original_image, name
                         else:
                             # Image decoding failed

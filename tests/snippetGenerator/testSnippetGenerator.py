@@ -55,7 +55,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
     def test_full_functionality(self):
         # Extract the json files from the json tar file
         self.instance.extract_json(self.json_tar_path)
-
         output_dir = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output'
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
@@ -150,21 +149,15 @@ class SnippetGenerator_Tests(unittest.TestCase):
             json_member = tarfile.TarInfo(name="sample.json")
             json_member.size = len(json_data_bytes)
             tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
-
         # Call the function to extract JSON data from the tarfile
         self.instance.extract_json(self.test_tarfile_path)
-
         # Get the printed output
         printed_output = sys.stdout.getvalue()
-
         # Restore stdout
         sys.stdout = original_stdout
-
         expected_output = "Wrong file type. File name was text. Please ensure that the tar includes only JSON files\n"
-
         # Check that the 'name_to_json' dictionary is empty (no JSON data was added)
         self.assertEqual(expected_output, printed_output)
-
 
 if __name__ == "__main__":
     unittest.main()
