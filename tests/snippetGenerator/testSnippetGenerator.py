@@ -34,12 +34,10 @@ class SnippetGenerator_Tests(unittest.TestCase):
     def tearDown(self):
         self.sample_image.close()
         directory = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
-
         # List all files in the directory
         if not os.path.exists(directory):
             return
         files = os.listdir(directory)
-
         # Iterate over each file and remove it
         for file_name in files:
             file_path = os.path.join(directory, file_name)
