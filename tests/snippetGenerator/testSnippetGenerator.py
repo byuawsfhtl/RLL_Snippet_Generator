@@ -1,11 +1,7 @@
 import unittest
 import os
-import io
 from PIL import Image
-import tarfile
-import json
 import sys
-from io import StringIO
 
 current = os.path.dirname(os.path.realpath(__file__))
 testFolder = os.path.dirname(current)
