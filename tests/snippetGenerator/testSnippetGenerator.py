@@ -109,8 +109,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
     def test_fail_make_snippets(self):
         # Redirect std out to catch print statements
-        original_stdout = sys.stdout
-        sys.stdout = StringIO()
         name = 'sample'
         with self.assertRaises(ValueError):
             for snippet, name in self.instance.image_snippet_generator(self.sample_image, name):
