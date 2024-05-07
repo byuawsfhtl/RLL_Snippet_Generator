@@ -8,9 +8,10 @@ import sys
 from io import StringIO
 
 current = os.path.dirname(os.path.realpath(__file__))
-parent = os.path.dirname(current)
-sys.path.append(parent)
-from SnippetGenerator import SnippetGenerator
+testFolder = os.path.dirname(current)
+root = os.path.dirname(testFolder)
+sys.path.append(os.path.join(root, "src"))
+from SnippetGenerator import SnippetGenerator  # noqa: E402
 
 
 class SnippetGenerator_Tests(unittest.TestCase):
@@ -25,9 +26,8 @@ class SnippetGenerator_Tests(unittest.TestCase):
         self.sample_image = Image.open(self.sample_image_path)
         # Create a sample JSON data and image for testing
         self.test_json_data = {
-            'corners': [
-                [[0, 0], [100, 0], [100, 100],
-                 [0, 100], [100, 100], [100, 200]]
+            "corners": [
+                [[0, 0], [100, 0], [100, 100], [0, 100], [100, 100], [100, 200]]
             ]
         }
 
@@ -65,7 +65,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
             # expected_names = self.get_names(name)
             i = 0
             # Using each image and its name, generate the snippets
-            for snippet, snippet_name in self.instance.image_snippet_generator(image, name):
+            for snippet, snippet_name in self.instance.image_snippet_generator(
+                image, name
+            ):
                 assert snippet is not None
                 # self.assertEqual(snippet_name, expected_names[i])
                 image_filename = snippet_name
@@ -139,17 +141,17 @@ class SnippetGenerator_Tests(unittest.TestCase):
         original_stdout = sys.stdout
         sys.stdout = StringIO()
         # Create a sample tar file for testing with a non-JSON file
-        with tarfile.open(self.test_tarfile_path, 'w') as tar:
+        with tarfile.open(self.test_tarfile_path, "w") as tar:
             # Add a text file (not JSON) to the tarfile
-            text_data_bytes = self.test_text_data.encode('utf-8')
-            text_member = tarfile.TarInfo(name='text.txt')
+            text_data_bytes = self.test_text_data.encode("utf-8")
+            text_member = tarfile.TarInfo(name="text.txt")
             text_member.size = len(text_data_bytes)
             tar.addfile(text_member, fileobj=io.BytesIO(text_data_bytes))
 
             # Add a JSON file to the tarfile
             json_data_str = json.dumps(self.test_json_data)
-            json_data_bytes = json_data_str.encode('utf-8')
-            json_member = tarfile.TarInfo(name='sample.json')
+            json_data_bytes = json_data_str.encode("utf-8")
+            json_member = tarfile.TarInfo(name="sample.json")
             json_member.size = len(json_data_bytes)
             tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
 
@@ -168,5 +170,5 @@ class SnippetGenerator_Tests(unittest.TestCase):
         self.assertEqual(expected_output, printed_output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
