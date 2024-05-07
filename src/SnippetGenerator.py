@@ -4,12 +4,14 @@ and a directory of json files that came from those images.
 It links the json to the images via a map.
 It then opens each image and creates snippets of the image based on the corner points in the json file.
 """
+
 import tarfile as tf
 import json
 import numpy as np
 import cv2
 from PIL import Image
 from typing import Tuple
+
 
 class SnippetGenerator:
     """
@@ -53,26 +55,30 @@ class SnippetGenerator:
         """
         if name in self.name_to_json:
             json_data = self.name_to_json[name]
-            tables = json_data['tables']
+            tables = json_data["tables"]
             for table in tables:
-                columns_and_rows = table['points']
-                for col in range(len(columns_and_rows)-1):
-                    for row in range(len(columns_and_rows[0])-1):
+                columns_and_rows = table["points"]
+                for col in range(len(columns_and_rows) - 1):
+                    for row in range(len(columns_and_rows[0]) - 1):
                         if not get_all_snippets and (row, col) not in desired_snippets:
                             continue
                         # Only get the fields
-                        if 'Field' not in table['label']:
-                            continue 
+                        if "Field" not in table["label"]:
+                            continue
                         left_top_corner = columns_and_rows[col][row]
-                        right_top_corner = columns_and_rows[col+1][row]
-                        bottom_right_corner = columns_and_rows[col+1][row+1]
-                        bottom_left_corner = columns_and_rows[col][row+1]
+                        right_top_corner = columns_and_rows[col + 1][row]
+                        bottom_right_corner = columns_and_rows[col + 1][row + 1]
+                        bottom_left_corner = columns_and_rows[col][row + 1]
                         left_side = min(left_top_corner[0], bottom_left_corner[0])
                         upper_side = min(left_top_corner[1], right_top_corner[1])
                         right_side = max(bottom_right_corner[0], right_top_corner[0])
-                        lower_side = max(bottom_right_corner[1], bottom_left_corner[1]) + 3
+                        lower_side = (
+                            max(bottom_right_corner[1], bottom_left_corner[1]) + 3
+                        )
                         # Crop the image
-                        cropped_image = image.crop((left_side, upper_side, right_side, lower_side))
+                        cropped_image = image.crop(
+                            (left_side, upper_side, right_side, lower_side)
+                        )
                         # Create a name for the image
                         cropped_image_name = f"{table['label']}_row_{row}_col_{col}.png"
                         # Generate the snippet
@@ -116,10 +122,13 @@ class SnippetGenerator:
                             yield original_image, name
                         else:
                             # Image decoding failed
-                            raise ValueError(f"cv2_image {name} is None. Image decoding failed.")
+                            raise ValueError(
+                                f"cv2_image {name} is None. Image decoding failed."
+                            )
                 else:
-                    raise ValueError(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")
-                    
+                    raise ValueError(
+                        f"Wrong file type. File was {name}. Please ensure that the tar includes only image files"
+                    )
 
     def extract_json(self, input_path: str) -> None:
         """
@@ -142,4 +151,3 @@ class SnippetGenerator:
                     print(
                         f"Wrong file type. File name was {name}. Please ensure that the tar includes only JSON files"
                     )
-

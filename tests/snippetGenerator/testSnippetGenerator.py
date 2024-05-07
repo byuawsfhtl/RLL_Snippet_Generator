@@ -16,13 +16,13 @@ from SnippetGenerator import SnippetGenerator  # noqa: E402
 
 class SnippetGenerator_Tests(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/iowa_image.tar'
-        self.json_tar_path = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/iowa_json.tar'
-        self.test_tarfile_path = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/test.tar'
-        self.test_image_tarfile_path = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/test_image.tar'
+        self.image_tar_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/iowa_image.tar"
+        self.json_tar_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/iowa_json.tar"
+        self.test_tarfile_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/test.tar"
+        self.test_image_tarfile_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/test_image.tar"
         self.instance = SnippetGenerator(self.image_tar_path, self.json_tar_path)
-        self.test_text_data = 'This is not JSON data.'
-        self.sample_image_path = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/sample_image.jpg'
+        self.test_text_data = "This is not JSON data."
+        self.sample_image_path = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/resources/sample_image.jpg"
         self.sample_image = Image.open(self.sample_image_path)
         # Create a sample JSON data and image for testing
         self.test_json_data = {
@@ -48,12 +48,14 @@ class SnippetGenerator_Tests(unittest.TestCase):
             except OSError as e:
                 # If file deletion fails, print the error message
                 print("Error: {} - {}".format(e.filename, e.strerror))
-        os.rmdir('fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output')
+        os.rmdir(
+            "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
+        )
 
     def test_full_functionality(self):
         # Extract the json files from the json tar file
         self.instance.extract_json(self.json_tar_path)
-        output_dir = 'fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output'
+        output_dir = "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
         # Extract the image files from the image tar file
@@ -73,18 +75,20 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 i += 1
         # Check that the output directory contains the expected number of images
         self.assertEqual(len(os.listdir(output_dir)), 50)
-    
+
     def test_name_not_in_json(self):
         with self.assertRaises(ValueError):
-            for snippet, snippet_name in self.instance.image_snippet_generator(self.sample_image, "not_in_json"):
+            for snippet, snippet_name in self.instance.image_snippet_generator(
+                self.sample_image, "not_in_json"
+            ):
                 pass
-    
+
     def test_image_not_in_tar(self):
         with self.assertRaises(ValueError):
-            for image, name in self.instance.image_from_tar_generator(self.json_tar_path):
-                pass    
-        
-        
+            for image, name in self.instance.image_from_tar_generator(
+                self.json_tar_path
+            ):
+                pass
 
     # def test_make_snippets_pass(self):
     #     name = 'sample'
@@ -105,12 +109,13 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
     def test_fail_make_snippets(self):
         # Redirect std out to catch print statements
-        name = 'sample'
+        name = "sample"
         with self.assertRaises(ValueError):
-            for snippet, name in self.instance.image_snippet_generator(self.sample_image, name):
+            for snippet, name in self.instance.image_snippet_generator(
+                self.sample_image, name
+            ):
                 assert snippet is None
                 assert name is None
-
 
     # def test_extract_json_from_tarfile(self):
     #     # Create a sample tar file for testing
@@ -156,6 +161,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         expected_output = "Wrong file type. File name was text. Please ensure that the tar includes only JSON files\n"
         # Check that the 'name_to_json' dictionary is empty (no JSON data was added)
         self.assertEqual(expected_output, printed_output)
+
 
 if __name__ == "__main__":
     unittest.main()
