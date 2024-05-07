@@ -53,7 +53,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
             "fslg_census/compute/common_tools/snippet_generator/branches/Gideon/RLL_Snippet_Generator/tests/output"
         )
 
-
     def test_full_functionality(self):
         # Extract the json files from the json tar file
         self.instance.extract_json(self.json_tar_path)
@@ -139,7 +138,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
     #     self.assertIn('sample', self.instance.name_to_json)
     #     self.assertEqual(self.instance.name_to_json['sample'], self.test_json_data)
 
-
     # Test that it does not work when a different file is passed in
     def test_fail_extract_json_from_tarfile(self):
         # Redirect std out to catch print statements
@@ -166,6 +164,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         # Restore stdout
         sys.stdout = original_stdout
         expected_output = "Wrong file type. File name was text. Please ensure that the tar includes only JSON files\n"
+        assert printed_output == expected_output
 
 
 if __name__ == "__main__":
