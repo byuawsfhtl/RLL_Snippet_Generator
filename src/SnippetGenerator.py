@@ -127,7 +127,6 @@ class SnippetGenerator:
                         else:
                             # Image decoding failed
                             raise ValueError(f"cv2_image {name} is None. Image decoding failed.")
-
                 else:
                     raise ValueError(f"Wrong file type. File was {name}. Please ensure that the tar includes only image files")
                     

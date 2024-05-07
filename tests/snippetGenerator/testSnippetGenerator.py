@@ -74,7 +74,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 output_path = os.path.join(output_dir, image_filename)
                 snippet.save(output_path)
                 i += 1
-                
         # Check that the output directory contains the expected number of images
         self.assertEqual(len(os.listdir(output_dir)), 50)
     
@@ -145,7 +144,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
             text_member = tarfile.TarInfo(name="text.txt")
             text_member.size = len(text_data_bytes)
             tar.addfile(text_member, fileobj=io.BytesIO(text_data_bytes))
-
             # Add a JSON file to the tarfile
             json_data_str = json.dumps(self.test_json_data)
             json_data_bytes = json_data_str.encode("utf-8")
