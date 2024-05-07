@@ -40,7 +40,7 @@ class SnippetGenerator:
         name: str,
         desired_snippets: set = None,
         get_all_snippets: bool = True,
-    ) -> Image.Image:
+    ) -> Image.Image: # type: ignore
         """
         Generates image snippets from a given image and its corresponding json file.
 
@@ -54,7 +54,9 @@ class SnippetGenerator:
         tuple: A tuple containing the cropped image and its name.
         """
         if name in self.name_to_json:
+            print(name)
             json_data = self.name_to_json[name]
+            # print(json_data)
             tables = json_data["tables"]
             for table in tables:
                 columns_and_rows = table["points"]

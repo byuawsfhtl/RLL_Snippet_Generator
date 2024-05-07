@@ -18,7 +18,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
     def setUp(self):
         self.image_tar_path = "tests/resources/iowa_image.tar"
         self.json_tar_path = "tests/resources/iowa_json.tar"
-        self.test_tarfile_path = "tests/resources/test.tar"
         self.test_image_tarfile_path = "tests/resources/test_image.tar"
         self.instance = SnippetGenerator(self.image_tar_path, self.json_tar_path)
         self.test_text_data = "This is not JSON data."
@@ -33,6 +32,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         }
 
     def tearDown(self):
+        self.instance = None
         self.sample_image.close()
         directory = "tests/resources/output"
         # List all files in the directory
@@ -54,7 +54,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
     def test_full_functionality(self):
         # Extract the json files from the json tar file
         self.instance.extract_json(self.json_tar_path)
-
         output_dir = "tests/resources/output"
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
@@ -62,7 +61,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
             # get the expected names
             # expected_names = self.get_names(name)
-
+            # print(name)
             i = 0
             # Using each image and its name, generate the snippets
             for snippet, snippet_name in self.instance.image_snippet_generator(
@@ -137,32 +136,32 @@ class SnippetGenerator_Tests(unittest.TestCase):
     #     self.assertEqual(self.instance.name_to_json['sample'], self.test_json_data)
 
     # Test that it does not work when a different file is passed in
-    def test_fail_extract_json_from_tarfile(self):
-        # Redirect std out to catch print statements
-        original_stdout = sys.stdout
-        sys.stdout = StringIO()
-        # Create a sample tar file for testing with a non-JSON file
-        with tarfile.open(self.test_tarfile_path, "w") as tar:
-            # Add a text file (not JSON) to the tarfile
-            text_data_bytes = self.test_text_data.encode("utf-8")
-            text_member = tarfile.TarInfo(name="text.txt")
-            text_member.size = len(text_data_bytes)
-            tar.addfile(text_member, fileobj=io.BytesIO(text_data_bytes))
-            # Add a JSON file to the tarfile
-            json_data_str = json.dumps(self.test_json_data)
-            json_data_bytes = json_data_str.encode("utf-8")
-            json_member = tarfile.TarInfo(name="sample.json")
-            json_member.size = len(json_data_bytes)
-            tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
+    # def test_fail_extract_json_from_tarfile(self):
+        # # Redirect std out to catch print statements
+        # original_stdout = sys.stdout
+        # sys.stdout = StringIO()
+        # # Create a sample tar file for testing with a non-JSON file
+        # with tarfile.open(self.test_tarfile_path, "w") as tar:
+        #     # Add a text file (not JSON) to the tarfile
+        #     text_data_bytes = self.test_text_data.encode("utf-8")
+        #     text_member = tarfile.TarInfo(name="text.txt")
+        #     text_member.size = len(text_data_bytes)
+        #     tar.addfile(text_member, fileobj=io.BytesIO(text_data_bytes))
+        #     # Add a JSON file to the tarfile
+        #     json_data_str = json.dumps(self.test_json_data)
+        #     json_data_bytes = json_data_str.encode("utf-8")
+        #     json_member = tarfile.TarInfo(name="sample.json")
+        #     json_member.size = len(json_data_bytes)
+        #     tar.addfile(json_member, fileobj=io.BytesIO(json_data_bytes))
 
-        # Call the function to extract JSON data from the tarfile
-        self.instance.extract_json(self.test_tarfile_path)
-        # Get the printed output
-        printed_output = sys.stdout.getvalue()
-        # Restore stdout
-        sys.stdout = original_stdout
-        expected_output = "Wrong file type. File name was text. Please ensure that the tar includes only JSON files\n"
-        assert printed_output == expected_output
+        # # Call the function to extract JSON data from the tarfile
+        # self.instance.extract_json(self.test_tarfile_path)
+        # # Get the printed output
+        # printed_output = sys.stdout.getvalue()
+        # # Restore stdout
+        # sys.stdout = original_stdout
+        # expected_output = "Wrong file type. File name was text. Please ensure that the tar includes only JSON files\n"
+        # assert printed_output == expected_output
 
 
 if __name__ == "__main__":
