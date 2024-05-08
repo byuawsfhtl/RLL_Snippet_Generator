@@ -12,8 +12,8 @@ import ProcessWordSnippets as Pws  # noqa: E402
 
 class ProcessWordSnippetsTestss(unittest.TestCase):
     def setUp(self):
-        self.image_tar_path = "tests/resources/images.tar"
-        self.json_tar_path = "tests/resources/json.tar"
+        self.image_tar_path = "tests/resources/iowa_image.tar"
+        self.json_tar_path = "tests/resources/iowa_json.tar"
         self.snippets_tsv_path = "tests/resources/classificationTsv"
         self.output_dir = "tests/aaaTestResults"
         self.no_path = "./not/a/valid_path"

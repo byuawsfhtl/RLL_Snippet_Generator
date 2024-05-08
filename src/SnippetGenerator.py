@@ -55,33 +55,36 @@ class SnippetGenerator:
         """
         if name in self.name_to_json:
             json_data = self.name_to_json[name]
-            columns_and_rows = json_data["corners"]
-            for col in range(len(columns_and_rows) - 2):
-                for row in range(len(columns_and_rows[0]) - 1):
-                    if not get_all_snippets and (row, col) not in desired_snippets:
-                        continue
-                    left_top_corner = columns_and_rows[col][row]
-                    right_top_corner = columns_and_rows[col + 1][row]
-                    bottom_right_corner = columns_and_rows[col + 1][row + 1]
-                    bottom_left_corner = columns_and_rows[col][row + 1]
-
-                    left_side = min(left_top_corner[0], bottom_left_corner[0])
-                    upper_side = min(left_top_corner[1], right_top_corner[1])
-                    right_side = max(bottom_right_corner[0], right_top_corner[0])
-                    lower_side = max(bottom_right_corner[1], bottom_left_corner[1]) + 3
-
-                    # Crop the image
-                    cropped_image = image.crop(
-                        (left_side, upper_side, right_side, lower_side)
-                    )
-
-                    # Create a name for the image
-                    cropped_image_name = f"{name}_row_{row}_col_{col}.png"
-
-                    # Generate the snippet
-                    yield cropped_image, cropped_image_name
+            tables = json_data["tables"]
+            for table in tables:
+                columns_and_rows = table["points"]
+                for col in range(len(columns_and_rows) - 1):
+                    for row in range(len(columns_and_rows[0]) - 1):
+                        if not get_all_snippets and (row, col) not in desired_snippets:
+                            continue
+                        # Only get the fields
+                        if "Field" not in table["label"]:
+                            continue
+                        left_top_corner = columns_and_rows[col][row]
+                        right_top_corner = columns_and_rows[col + 1][row]
+                        bottom_right_corner = columns_and_rows[col + 1][row + 1]
+                        bottom_left_corner = columns_and_rows[col][row + 1]
+                        left_side = min(left_top_corner[0], bottom_left_corner[0])
+                        upper_side = min(left_top_corner[1], right_top_corner[1])
+                        right_side = max(bottom_right_corner[0], right_top_corner[0])
+                        lower_side = (
+                            max(bottom_right_corner[1], bottom_left_corner[1]) + 3
+                        )
+                        # Crop the image
+                        cropped_image = image.crop(
+                            (left_side, upper_side, right_side, lower_side)
+                        )
+                        # Create a name for the image
+                        cropped_image_name = f"{table['label']}_row_{row}_col_{col}.png"
+                        # Generate the snippet
+                        yield cropped_image, cropped_image_name
         else:
-            print(f"Image {name} not found in the json file")
+            raise ValueError("Image not found in the json file")
 
     def image_from_tar_generator(self, image_path: str) -> Tuple[Image.Image, str]:
         """
@@ -110,23 +113,20 @@ class SnippetGenerator:
                             bytearray(tar_file.extractfile(member).read()),
                             dtype=np.uint8,
                         )
-
                         # Decode the image file
                         cv2_image = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
-
                         if cv2_image is not None:
                             # Create an Image
                             original_image = Image.fromarray(cv2_image)
-
                             self.image_names.add(name)
-
                             yield original_image, name
                         else:
                             # Image decoding failed
-                            print(f"cv2_image {name} is None. Image decoding failed.")
-
+                            raise ValueError(
+                                f"cv2_image {name} is None. Image decoding failed."
+                            )
                 else:
-                    print(
+                    raise ValueError(
                         f"Wrong file type. File was {name}. Please ensure that the tar includes only image files"
                     )
 
