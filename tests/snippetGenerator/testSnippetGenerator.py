@@ -55,9 +55,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
             os.mkdir(output_dir)
         # Extract the image files from the image tar file
         for image, name in self.instance.image_from_tar_generator(self.image_tar_path):
-            # get the expected names
-            # expected_names = self.get_names(name)
-            # print(name)
             i = 0
             # Using each image and its name, generate the snippets
             for snippet, snippet_name in self.instance.image_snippet_generator(
