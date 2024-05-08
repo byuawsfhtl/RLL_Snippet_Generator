@@ -40,7 +40,7 @@ class SnippetGenerator:
         name: str,
         desired_snippets: set = None,
         get_all_snippets: bool = True,
-    ) -> Image.Image: 
+    ) -> Image.Image:
         """
         Generates image snippets from a given image and its corresponding json file.
 
@@ -88,7 +88,7 @@ class SnippetGenerator:
         else:
             raise ValueError("Image not found in the json file")
 
-    def image_from_tar_generator(self, image_path: str) -> Tuple[Image.Image, str]:  
+    def image_from_tar_generator(self, image_path: str) -> Tuple[Image.Image, str]:
         """
         Generates images from a tar file containing images.
 
