@@ -1,153 +1,177 @@
 """
-This script takes an image and image directory files from a tarfile
-and a directory of json files that came from those images.
-It links the json to the images via a map.
-It then opens each image and creates snippets of the image based on the corner points in the json file.
+This file contains the SnippetGenerator class which is used to crop snippets out of images.
 """
 
-import tarfile as tf
-import json
-import numpy as np
-import cv2
+import tarfile
+import io
+import pandas as pd
+import math
+import os
 from PIL import Image
 from typing import Tuple
+
+
+class CustomException(Exception):
+    """A custom exception class. Used to identify error with our scripts."""
+
+    def __init__(self, message=""):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"{self.__class__.__name__}: {self.message}"
+
 
 
 class SnippetGenerator:
     """
     This class generates image snippets from a tar file containing images
-    and a tar file containing json files with corner points.
+    and a pandas dataframe that contains coordinate information for the snippets. 
     """
 
     # Constructor for this class
-
-    def __init__(self, tar1, tar2):
+    def __init__(self, df: pd.DataFrame):
         """
         Initializes the snippet_generator class with the paths to the tar files containing images and json files.
 
         Args:
-        tar1 (str): Path to the tar file containing images.
-        tar2 (str): Path to the tar file containing json files.
+        df: A DataFrame object that contains at least the following information: reel_filename, image_filename, snip_name, x1, y1, ... x4, y4
         """
-        self.image_tar_path = tar1
-        self.json_tar_path = tar2
-        self.name_to_json = dict()
-        self.image_names = set()
+        self.map_coordinates_to_images = self.convert_df_to_map(df)
 
-    def image_snippet_generator(
-        self,
-        image: Image.Image,
-        name: str,
-        desired_snippets: set = None,
-        get_all_snippets: bool = True,
-    ) -> Image.Image:
-        """
-        Generates image snippets from a given image and its corresponding json file.
 
-        Args:
-        image: PIL.Image.Image. The image to generate snippets from.
-        name: str. The name of the image.
-        _desired_snippets_: set. A list of snippets that the user wants. Optional, defaults to none.
-        _get_all_snippets_: bool. True if user wants to recieve all snippets. Optional, defaults to true.
+    def convert_df_to_map(self, df: pd.DataFrame):
+        dict_of_reel_image_field_to_coordinates = {}
 
-        Yields:
-        tuple: A tuple containing the cropped image and its name.
-        """
-        if name in self.name_to_json:
-            json_data = self.name_to_json[name]
-            tables = json_data["tables"]
-            for table in tables:
-                columns_and_rows = table["points"]
-                for col in range(len(columns_and_rows) - 1):
-                    for row in range(len(columns_and_rows[0]) - 1):
-                        if not get_all_snippets and (row, col) not in desired_snippets:
-                            continue
-                        # Only get the fields
-                        if "Field" not in table["label"]:
-                            continue
-                        left_top_corner = columns_and_rows[col][row]
-                        right_top_corner = columns_and_rows[col + 1][row]
-                        bottom_right_corner = columns_and_rows[col + 1][row + 1]
-                        bottom_left_corner = columns_and_rows[col][row + 1]
-                        left_side = min(left_top_corner[0], bottom_left_corner[0])
-                        upper_side = min(left_top_corner[1], right_top_corner[1])
-                        right_side = max(bottom_right_corner[0], right_top_corner[0])
-                        lower_side = (
-                            max(bottom_right_corner[1], bottom_left_corner[1]) + 3
-                        )
-                        # Crop the image
-                        cropped_image = image.crop(
-                            (left_side, upper_side, right_side, lower_side)
-                        )
-                        # Create a name for the image
-                        cropped_image_name = f"{table['label']}_row_{row}_col_{col}.png"
-                        # Generate the snippet
-                        yield cropped_image, cropped_image_name
+        for index, row in df.iterrows():
+            try:
+                reel_filename, image_filename, snip_name, box_coordinates = self.get_info_from_dataframe_row(row)
+
+                if reel_filename in dict_of_reel_image_field_to_coordinates:
+                    self.check_if_imageid_in_dict(dict_of_reel_image_field_to_coordinates, reel_filename, image_filename, snip_name, box_coordinates)
+                else:
+                    dict_of_reel_image_field_to_coordinates[reel_filename] = {}
+                    self.check_if_imageid_in_dict(dict_of_reel_image_field_to_coordinates, reel_filename, image_filename, snip_name, box_coordinates)
+            except CustomException as e:
+                print("Found error: ", e)
+
+        return dict_of_reel_image_field_to_coordinates
+
+
+    def get_info_from_dataframe_row(self, row):
+        if any(self.check_for_errors(x) for x in row):
+            raise CustomException(f"None or Nan values found in dataframe at row: {row['reel_filename']}, {row['image_filename']}, {row['snip_name']}")
         else:
-            raise ValueError("Image not found in the json file")
+            reel_filename, image_filename, snip_name = row['reel_filename'], row['image_filename'], row['snip_name']
+            box_coordinates = self.get_box_coordinates(row)
+            return reel_filename, image_filename, snip_name, box_coordinates
 
-    def image_from_tar_generator(self, image_path: str) -> Tuple[Image.Image, str]:
-        """
-        Generates images from a tar file containing images.
 
-        Args:
-        image_path (str): The path to the tar file containing images.
+    def check_for_errors(self, x):
+        if isinstance(x, int) or isinstance(x, float) or isinstance(x, complex):
+            if math.isnan(x):
+                return True
+        if x is None:
+            return True
 
-        Yields:
-        tuple: A tuple containing the original image and its name.
-        """
-        set_of_img_extensions = {"png", "jpg", "jpeg", "jp2", "tif", "tiff"}
-        with tf.open(image_path, mode="r") as tar_file:
-            # Iterate through each member of the tarfile
-            for member in tar_file:
-                extension = member.name.split(".")[-1]
-                name = member.name.split(".")[0]
-                if name in self.image_names:
-                    continue
-                # If it is an image decode it and create the snippets
-                if extension in set_of_img_extensions and len(self.name_to_json) > 0:
-                    # Check if the image name is in the json file
-                    if name in self.name_to_json:
-                        # Extract the image data from the tarfile
-                        img_data = np.asarray(
-                            bytearray(tar_file.extractfile(member).read()),
-                            dtype=np.uint8,
-                        )
-                        # Decode the image file
-                        cv2_image = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
-                        if cv2_image is not None:
-                            # Create an Image
-                            original_image = Image.fromarray(cv2_image)
-                            self.image_names.add(name)
-                            yield original_image, name
-                        else:
-                            # Image decoding failed
-                            raise ValueError(
-                                f"cv2_image {name} is None. Image decoding failed."
-                            )
-                else:
-                    raise ValueError(
-                        f"Wrong file type. File was {name}. Please ensure that the tar includes only image files"
-                    )
 
-    def extract_json(self, input_path: str) -> None:
-        """
-        Extracts json files from a tar file and stores them in a dictionary.
+    def get_box_coordinates(self, row: pd.Series):
+        x_coordinates = [row[f'x{i}'] for i in range(1, 5)]
+        y_coordinates = [row[f'y{i}'] for i in range(1, 5)]
 
-        Args:
-        input_path (str): The path to the tar file containing json files.
-        """
-        with tf.open(input_path, mode="r") as tar_file:
-            # Iterate through each member of the tarfile
-            for member in tar_file:
-                name = member.name.split(".")[0]
-                # If it is a json file extract it and store it in a dictionary
-                if member.isfile() and member.name.endswith(".json"):
-                    json_data = tar_file.extractfile(member)
-                    dict_with_corner_points = json.load(json_data)
-                    self.name_to_json[name] = dict_with_corner_points
-                    # print(member)
-                else:
-                    print(
-                        f"Wrong file type. File name was {name}. Please ensure that the tar includes only JSON files"
-                    )
+        left, upper, right, lower = min(x_coordinates), min(y_coordinates), max(x_coordinates), max(y_coordinates)
+
+        return (left, upper, right , lower)
+    
+
+    def check_if_imageid_in_dict(self, dict_of_reel_image_field_to_coordinates, reel_filename, image_filename, field, box_coordinates):
+        if image_filename in dict_of_reel_image_field_to_coordinates[reel_filename]:
+            self.add_field_and_coordinates(dict_of_reel_image_field_to_coordinates, reel_filename, image_filename, field, box_coordinates)
+        else:
+            dict_of_reel_image_field_to_coordinates[reel_filename][image_filename] = []
+            self.add_field_and_coordinates(dict_of_reel_image_field_to_coordinates, reel_filename, image_filename, field, box_coordinates)
+            
+
+    def add_field_and_coordinates(self, dict_of_reel_image_field_to_coordinates, reel_filename, image_filename, field, box_coordinates):
+        dict_of_reel_image_field_to_coordinates[reel_filename][image_filename].append((field, box_coordinates))
+
+
+    def save_snippets_to_directory(self, input_tarfile: str, output_directory: str, batch_size: int = 10000):
+        for snippets, snippet_names in self.get_batch_of_snippets(input_tarfile, batch_size):
+                for snippet_name, snippet in zip(snippets, snippet_names):
+                    tarfile_name, image_name = snippet_name.split('_')[:2]
+
+                    first_directory = os.path.join(output_directory, tarfile_name)
+                    second_directory = os.path.join(first_directory, image_name)
+                    path_to_snippet = os.path.join(second_directory, snippet_name)
+
+                    if not os.path.exists(first_directory):
+                        os.makedirs(first_directory)
+                        os.makedirs(second_directory)
+
+                    if not os.path.exists(second_directory):
+                        os.makedirs(second_directory)
+
+                    snippet.save(path_to_snippet)
+
+    
+    def save_snippets_as_tar(self, input_tarfile: str, output_directory: str, batch_size: int = 10000):
+        outfile_name = os.path.splitext(os.path.basename(input_tarfile))[0] + "_snippets.tar.gz"
+        outfile_path = os.path.join(output_directory, outfile_name)
+
+        with tarfile.open(outfile_path, "w:gz") as tar_out:
+            for snippets, snippet_names in self.get_batch_of_snippets(input_tarfile, batch_size):
+                for snippet_name, snippet in zip(snippets, snippet_names):
+                    try:
+                        snippet_byte_arr = io.BytesIO()
+                        snippet.save(snippet_byte_arr, format="JPEG")
+                        snippet_byte_arr.seek(0)
+
+                        snippet_info = tarfile.TarInfo(name=snippet_name)
+                        snippet_info.size = len(snippet_byte_arr.getvalue())
+
+                        tar_out.addfile(snippet_info, snippet_byte_arr)
+                    except Exception as e:
+                        print(snippet_name)
+                        print(e)
+                tar_out.fileobj.flush()
+        
+
+    def get_batch_of_snippets(self, input_tarfile: str, batch_size: int):
+        
+        tarfile_name = os.path.basename(input_tarfile)
+
+        snippets, snippet_names = [], []
+        for image, image_name in self.yield_image_and_name(input_tarfile):
+            for snippet_name, snippet in self.yield_snippet_and_name(tarfile_name, image_name, image):
+                snippets.append(snippet)
+                snippet_names.append(snippet_name)
+                
+                if len(snippets) == batch_size:
+                    yield snippet_names, snippets
+                    snippets, snippet_names = [], []
+                    
+        if snippets and snippet_names:
+            yield snippet_names, snippets
+                
+    
+    def yield_image_and_name(self, input_tarfile):
+
+        read_param = "r"
+        if ".gz" in os.path.basename(input_tarfile):
+            read_param = "r:gz"
+
+        with tarfile.open(input_tarfile, read_param) as tar_in:
+            for encoded_image in tar_in:
+                if encoded_image.isfile():
+                    try:
+                        image_name = encoded_image.name
+                        img_data = Image.open(io.BytesIO(tar_in.extractfile(encoded_image).read()))
+                        yield img_data, image_name
+                    except Exception as e:
+                        print("An error occured: ", e)
+
+
+    def yield_snippet_and_name(self, tarfile_name: str, image_name: str, image: Image.Image):
+        for field_name, box_coordinates in self.map_coordinates_to_images[tarfile_name][image_name]:
+            yield f"{os.path.splitext(tarfile_name)[0]}_{os.path.splitext(image_name)[0]}_{field_name}.jpg", image.crop(box_coordinates)
