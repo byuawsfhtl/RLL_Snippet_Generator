@@ -89,7 +89,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
             info = ['reel_1.tar', None, 'person_name', 1, 1, 1, 2, math.nan, 1, 2, 2]
             df = pd.DataFrame(data=[info], columns=self.df_column_names)
             row = df.iloc[0]
-            values = self.dataframe_converter.get_info_from_dataframe_row(row)
+            _ = self.dataframe_converter.get_info_from_dataframe_row(row)
         except Exception as e:
             expected_exception_messsage = "CustomException: None or Nan values found in dataframe at row: reel_1.tar, None, person_name"
             exception_message = e.__str__()
