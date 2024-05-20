@@ -201,6 +201,8 @@ class SnippetGenerator_Tests(unittest.TestCase):
         else:
             os.makedirs(out_dir)
 
+        self.snippet_generator.save_snippets_to_directory(self.image_tar_path, out_dir)
+
         snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(out_dir)
 
         assert snippet_paths_are_equal
@@ -213,15 +215,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         if os.path.exists(out_dir):
             shutil.rmtree(out_dir)
-            os.makedirs(out_dir)
-        else:
-            os.makedirs(out_dir)
 
         tarfile_in_name = os.path.splitext(os.path.basename(self.image_tar_path))[0]
         tarfile_out_filename = tarfile_in_name + '_snippets.tar.gz'
-
-        if tarfile_out_filename in os.listdir(out_dir):
-            os.remove(os.path.join(out_dir, tarfile_out_filename))
 
         self.snippet_generator.save_snippets_as_tar(self.image_tar_path, out_dir)
 

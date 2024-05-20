@@ -58,7 +58,7 @@ class SnippetGenerator:
                     if not os.path.exists(snippet_directory):
                         os.makedirs(snippet_directory)
 
-                    snippet.save(path_to_snippet, quality=100)
+                    snippet.save(path_to_snippet)
 
     
     def save_snippets_as_tar(self, input_tarfile: str, output_directory: str, batch_size: int = 10000):
