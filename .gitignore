@@ -3,6 +3,5 @@
 .coverage
 coverage.xml
 htmlcov/
-tests/aaaTestResults/
 
 .DS_Store
