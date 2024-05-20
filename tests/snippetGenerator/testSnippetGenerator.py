@@ -12,7 +12,7 @@ testFolder = os.path.dirname(current)
 root = os.path.dirname(testFolder)
 sys.path.append(os.path.join(root, "src"))
 
-from SnippetGenerator import SnippetGenerator, DataFrame_to_Dictionary_converter  # noqa: E402
+from SnippetGenerator import SnippetGenerator, DataFrame_to_Dictionary_converter, CustomException  # noqa: E402
 
 
 class SnippetGenerator_Tests(unittest.TestCase):
@@ -28,6 +28,16 @@ class SnippetGenerator_Tests(unittest.TestCase):
         self.df = pd.read_csv(self.iowa_tsv_path, sep='\t')
         self.snippet_generator = SnippetGenerator(self.df)
         self.dataframe_converter = DataFrame_to_Dictionary_converter()
+
+    
+    def test_custom_exception_class(self):
+        error_message = 'error'
+        expected_error_message = 'CustomException: ' + error_message
+
+        custom_exception = CustomException(error_message)
+        actual_error_message = custom_exception.__str__()
+
+        assert actual_error_message == expected_error_message
 
 
     def test_check_dataframe_has_valid_columns(self):

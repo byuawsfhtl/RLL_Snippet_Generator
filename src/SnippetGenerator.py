@@ -10,6 +10,7 @@ import os
 from PIL import Image
 from typing import Tuple
 
+
 class CustomException(Exception):
     """A custom exception class. Used to identify error with our scripts."""
 
