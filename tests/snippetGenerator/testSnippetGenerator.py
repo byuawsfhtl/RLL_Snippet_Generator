@@ -12,7 +12,7 @@ testFolder = os.path.dirname(current)
 root = os.path.dirname(testFolder)
 sys.path.append(os.path.join(root, "src"))
 
-from SnippetGenerator import SnippetGenerator  # noqa: E402
+from SnippetGenerator import SnippetGenerator, DataFrame_to_Dictionary_converter  # noqa: E402
 
 
 class SnippetGenerator_Tests(unittest.TestCase):
@@ -26,7 +26,8 @@ class SnippetGenerator_Tests(unittest.TestCase):
         self.image_tar_path = os.path.join('tests', 'resources', 'iowa_image.tar')
         self.iowa_tsv_path = os.path.join('tests', 'resources', 'iowa.tsv')
         self.df = pd.read_csv(self.iowa_tsv_path, sep='\t')
-        self.instance = SnippetGenerator(self.df)
+        self.snippet_generator = SnippetGenerator(self.df)
+        self.dataframe_converter = DataFrame_to_Dictionary_converter()
 
 
     def test_check_dataframe_has_valid_columns(self):
@@ -34,28 +35,28 @@ class SnippetGenerator_Tests(unittest.TestCase):
         df_1 = pd.DataFrame(columns=self.df_column_names)
         df_2 = pd.DataFrame(columns=['reel_filename', 'other_field_1', 'image_filename', 'snip_name', 'x1', 'y1', 'x2', 'y2', 'x3', 'other_filed_2', 'y3', 'x4', 'y4'])
         
-        assert self.instance.check_dataframe_has_valid_columns(df_1)
-        assert self.instance.check_dataframe_has_valid_columns(df_2)
+        assert self.dataframe_converter.check_dataframe_has_valid_columns(df_1)
+        assert self.dataframe_converter.check_dataframe_has_valid_columns(df_2)
 
         # negative case
         df_1 = df_1.drop(columns=['reel_filename'])
         df_3 = pd.DataFrame()
 
-        assert not self.instance.check_dataframe_has_valid_columns(df_1)
-        assert not self.instance.check_dataframe_has_valid_columns(df_3)
+        assert not self.dataframe_converter.check_dataframe_has_valid_columns(df_1)
+        assert not self.dataframe_converter.check_dataframe_has_valid_columns(df_3)
 
 
     def test_check_for_errors(self):
         # Test a None value
-        assert self.instance.check_for_errors(None)
+        assert self.dataframe_converter.check_for_errors(None)
 
         # Test a Nan value
-        assert self.instance.check_for_errors(math.nan)
+        assert self.dataframe_converter.check_for_errors(math.nan)
 
         # Test regular values
-        assert not self.instance.check_for_errors(3.0)
-        assert not self.instance.check_for_errors(3)
-        assert not self.instance.check_for_errors('3')
+        assert not self.dataframe_converter.check_for_errors(3.0)
+        assert not self.dataframe_converter.check_for_errors(3)
+        assert not self.dataframe_converter.check_for_errors('3')
 
 
     def test_get_box_coordinates(self):
@@ -67,8 +68,8 @@ class SnippetGenerator_Tests(unittest.TestCase):
         series_1 = df.iloc[0]
         series_2 = df.iloc[1]
 
-        l1, u1, r1, d1 = self.instance.get_box_coordinates(series_1)
-        l2, u2, r2, d2 = self.instance.get_box_coordinates(series_2)
+        l1, u1, r1, d1 = self.dataframe_converter.get_box_coordinates(series_1)
+        l2, u2, r2, d2 = self.dataframe_converter.get_box_coordinates(series_2)
 
         assert l1 == row_1[0] and u1 == row_1[1] and r1 == row_1[4] and d1 == row_1[7]
         assert l2 == row_2[6] and u2 == row_2[1] and r2 == row_2[0] and d2 == row_2[3]
@@ -79,7 +80,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         info = ['reel_1.tar', 'image_1.jpg', 'person_name', 1, 1, 1, 2, 2, 1, 2, 2]
         df = pd.DataFrame(data=[info], columns=self.df_column_names)
         row = df.iloc[0]
-        reel_filename, image_filename, snip_name, box_coordinates = self.instance.get_info_from_dataframe_row(row)
+        reel_filename, image_filename, snip_name, box_coordinates = self.dataframe_converter.get_info_from_dataframe_row(row)
         assert box_coordinates[0] == row[3] and box_coordinates[1] == row[4] and box_coordinates[2] == row[7] and box_coordinates[3] == row[10]
         assert reel_filename == row[0] and image_filename == row[1] and snip_name == row[2]
 
@@ -88,7 +89,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
             info = ['reel_1.tar', None, 'person_name', 1, 1, 1, 2, math.nan, 1, 2, 2]
             df = pd.DataFrame(data=[info], columns=self.df_column_names)
             row = df.iloc[0]
-            values = self.instance.get_info_from_dataframe_row(row)
+            values = self.dataframe_converter.get_info_from_dataframe_row(row)
         except Exception as e:
             expected_exception_messsage = "CustomException: None or Nan values found in dataframe at row: reel_1.tar, None, person_name"
             exception_message = e.__str__()
@@ -103,14 +104,14 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         # case 1
         temp_dict = {reel_filename: {image_filename: []}}
-        self.instance.check_if_image_filename_in_dict(temp_dict, reel_filename, image_filename, snip_name, box_coordinates)
+        self.dataframe_converter.check_if_image_filename_in_dict(temp_dict, reel_filename, image_filename, snip_name, box_coordinates)
 
         assert temp_dict[reel_filename][image_filename][0][0] == snip_name
         assert temp_dict[reel_filename][image_filename][0][1] == box_coordinates
 
         # case 2
         temp_dict = {reel_filename: {}}
-        self.instance.check_if_image_filename_in_dict(temp_dict, reel_filename, image_filename, snip_name, box_coordinates)
+        self.dataframe_converter.check_if_image_filename_in_dict(temp_dict, reel_filename, image_filename, snip_name, box_coordinates)
 
         assert temp_dict[reel_filename][image_filename][0][0] == snip_name
         assert temp_dict[reel_filename][image_filename][0][1] == box_coordinates
@@ -120,12 +121,12 @@ class SnippetGenerator_Tests(unittest.TestCase):
         df = pd.read_csv(self.iowa_tsv_path, sep='\t')
 
         reel_filename = df.iloc[1][0]
-        assert reel_filename in self.instance.map_coordinates_to_images
+        assert reel_filename in self.snippet_generator.map_coordinates_to_images
 
         all_image_names_in_dict = True
 
         for image_filename in df['image_filename'].unique():
-            if image_filename not in self.instance.map_coordinates_to_images[reel_filename]:
+            if image_filename not in self.snippet_generator.map_coordinates_to_images[reel_filename]:
                 all_image_names_in_dict = False
 
         assert all_image_names_in_dict
@@ -134,7 +135,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
     def test_yield_image_and_name(self):
         test_image = Image.open(os.path.join('tests', 'resources', 'iowa.jpg'))
         
-        for tar_image_name, image in self.instance.yield_image_and_name(self.image_tar_path):
+        for tar_image_name, image in self.snippet_generator.yield_image_and_name(self.image_tar_path):
             
             assert tar_image_name == 'iowa.jpg'
 
@@ -152,8 +153,8 @@ class SnippetGenerator_Tests(unittest.TestCase):
     def test_yield_snippet_and_name(self):
         test_snippet = Image.open(os.path.join('tests', 'resources', 'iowa_image_iowa_Card_No.png'))
         
-        for image_name, image in self.instance.yield_image_and_name(self.image_tar_path):
-            for snip_name, snippet in self.instance.yield_snippet_and_name(os.path.basename(self.image_tar_path), image_name, image):
+        for image_name, image in self.snippet_generator.yield_image_and_name(self.image_tar_path):
+            for snip_name, snippet in self.snippet_generator.yield_snippet_and_name(os.path.basename(self.image_tar_path), image_name, image):
                 
                 assert snip_name == 'iowa_image_iowa_Card_No.png'
 
@@ -174,7 +175,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         batch_sizes_are_equal = True
 
-        for expected_batch_size, (_, _, snippet_names, _) in zip(images_per_batch, self.instance.get_batches_of_snippets(self.image_tar_path, 10)):
+        for expected_batch_size, (_, _, snippet_names, _) in zip(images_per_batch, self.snippet_generator.get_batches_of_snippets(self.image_tar_path, 10)):
             if expected_batch_size != len(snippet_names):
                 batch_sizes_are_equal = False
 
@@ -212,7 +213,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         if tarfile_out_filename in os.listdir(out_dir):
             os.remove(os.path.join(out_dir, tarfile_out_filename))
 
-        self.instance.save_snippets_as_tar(self.image_tar_path, out_dir)
+        self.snippet_generator.save_snippets_as_tar(self.image_tar_path, out_dir)
 
         assert tarfile_out_filename in os.listdir(out_dir)
 
