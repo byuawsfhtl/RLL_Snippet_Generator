@@ -12,10 +12,10 @@ testFolder = os.path.dirname(current)
 root = os.path.dirname(testFolder)
 sys.path.append(os.path.join(root, "src"))
 
-from SnippetGenerator import ( # noqa: E402
-    SnippetGenerator, # noqa: E402
-    DataFrame_to_Dictionary_converter, # noqa: E402
-    CustomException, # noqa: E402
+from SnippetGenerator import (  # noqa: E402
+    SnippetGenerator,  # noqa: E402
+    DataFrame_to_Dictionary_converter,  # noqa: E402
+    CustomException,  # noqa: E402
 )  # noqa: E402
 
 
