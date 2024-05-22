@@ -1,22 +1,19 @@
 import unittest
 import os
 from PIL import Image, ImageChops
-import sys
 import pandas as pd
 import math
 import shutil
 import subprocess
+import sys
 
 current = os.path.dirname(os.path.realpath(__file__))
 testFolder = os.path.dirname(current)
 root = os.path.dirname(testFolder)
-sys.path.append(os.path.join(root, "src"))
+sys.path.append(os.path.join(root, "src"))  
 
-from SnippetGenerator import (
-    SnippetGenerator,
-    DataFrame_to_Dictionary_converter,
-    CustomException,
-)  # noqa: E402
+from SnippetGenerator import (SnippetGenerator, DataFrame_to_Dictionary_converter, CustomException) # noqa: E402
+
 
 
 class SnippetGenerator_Tests(unittest.TestCase):
