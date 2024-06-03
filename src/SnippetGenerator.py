@@ -41,29 +41,29 @@ class SnippetGenerator:
         )
 
     def save_snippets_to_directory(
-        self, input_tarfile: str, output_directory: str, batch_size: int = 10000
+        self, input_tarfiles: list, output_directory: str, batch_size: int = 10000
     ):
         """
         This function will generate snippets for the user and save them out a directory. The directory structure will be output_directory -> reel_name -> image_name -> snippet.
 
         Args:
-            input_tarfile: This is the path to a tarfile that contains images.
+            input_tarfiles: The paths to the tarfiles that contains images to be snipped.
             output_directory: This is the path to a directory where many directories will be created, and where snippets will be saved to.
             batch_size: This function saves out images in batches to optimize IO performance. batch_size is given a default value.
         """
         for (
-            tarfile_name,
-            image_names,
-            snippet_names,
+            tarfile_name_no_ext,
+            image_filenames_no_ext,
+            snippet_filenames,
             snippets,
-        ) in self.get_batches_of_snippets(input_tarfile, batch_size):
-            for image_name, snippet_name, snippet in zip(
-                image_names, snippet_names, snippets
+        ) in self.get_batches_of_snippets(input_tarfiles, batch_size):
+            for image_filename_no_ext, snippet_filename, snippet in zip(
+                image_filenames_no_ext, snippet_filenames, snippets
             ):
                 snippet_directory = os.path.join(
-                    output_directory, tarfile_name, image_name
+                    output_directory, tarfile_name_no_ext, image_filename_no_ext
                 )
-                path_to_snippet = os.path.join(snippet_directory, snippet_name)
+                path_to_snippet = os.path.join(snippet_directory, snippet_filename)
 
                 if not os.path.exists(snippet_directory):
                     os.makedirs(snippet_directory)
@@ -71,78 +71,96 @@ class SnippetGenerator:
                 snippet.save(path_to_snippet)
 
     def save_snippets_as_tar(
-        self, input_tarfile: str, output_directory: str, batch_size: int = 10000
+        self,
+        input_tarfiles: list,
+        output_directory: str,
+        outfile: str,
+        batch_size: int = 10000,
     ):
         """
         This function will generate snippets for the user and save them out a tar file. The directory structure within the tarfile will be reel_name -> image_name -> snippet.
 
         Args:
-            input_tarfile: This is the path to a tarfile that contains images.
+            input_tarfiles: The paths to the tarfiles that contains images to be snipped.
             output_directory: This is the path to a directory where many directories will be created, and where snippets will be saved to.
+            outfile: The name of the output file to save the snippets to. This should be a .tar or .tar.gz file.
             batch_size: This function saves out images in batches to optimize IO performance. batch_size is given a default value.
         """
+        if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
+            raise CustomException(
+                f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)}"
+            )
 
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        outfile_name = (
-            os.path.splitext(os.path.basename(input_tarfile))[0] + "_snippets.tar.gz"
-        )
-        outfile_path = os.path.join(output_directory, outfile_name)
+        outfile_path = os.path.join(output_directory, outfile)
 
-        with tarfile.open(outfile_path, "w:gz") as tar_out:
+        write_param = "w"
+
+        if os.path.splitext(outfile)[-1] == "gz":
+            write_param = "w:gz"
+
+        with tarfile.open(outfile_path, write_param) as tar_out:
             for (
-                tarfile_name,
-                image_names,
-                snippet_names,
+                tarfile_name_no_ext,
+                image_filenames_no_ext,
+                snippet_filenames,
                 snippets,
-            ) in self.get_batches_of_snippets(input_tarfile, batch_size):
-                for image_name, snippet_name, snippet in zip(
-                    image_names, snippet_names, snippets
+            ) in self.get_batches_of_snippets(input_tarfiles, batch_size):
+                for image_filename_no_ext, snippet_filename, snippet in zip(
+                    image_filenames_no_ext, snippet_filenames, snippets
                 ):
                     try:
                         snippet_byte_arr = io.BytesIO()
                         snippet.save(snippet_byte_arr, format="PNG")
                         snippet_byte_arr.seek(0)
 
-                        tar_path = os.path.join(tarfile_name, image_name, snippet_name)
+                        tar_path = os.path.join(
+                            tarfile_name_no_ext, image_filename_no_ext, snippet_filename
+                        )
 
                         snippet_info = tarfile.TarInfo(name=tar_path)
                         snippet_info.size = len(snippet_byte_arr.getvalue())
 
                         tar_out.addfile(snippet_info, snippet_byte_arr)
                     except Exception as e:
-                        print(snippet_name)
+                        print(snippet_filename)
                         print(e)
 
-    def get_batches_of_snippets(self, input_tarfile: str, batch_size: int):
+    def get_batches_of_snippets(self, input_tarfiles: list, batch_size: int):
         """
         This function yields a batch of snippets from one or more images.
 
         Args:
-            input_tarfile: The path to the tarfile that contains images to be snipped.
+            input_tarfiles: The paths to the tarfiles that contains images to be snipped.
             batch_size: The number of snippets we want this function to yield at a given time.
         """
 
-        tarfile_name = os.path.basename(input_tarfile)
-        tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
+        for input_tarfile in input_tarfiles:
+            tarfile_name = os.path.basename(input_tarfile)
+            tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
 
-        snippets, snippet_names, image_names = [], [], []
-        for image_name, image in self.yield_image_and_name(input_tarfile):
-            image_name_no_ext = os.path.splitext(image_name)[0]
-            for snippet_name, snippet in self.yield_snippet_and_name(
-                tarfile_name, image_name, image
-            ):
-                snippets.append(snippet)
-                snippet_names.append(snippet_name)
-                image_names.append(image_name_no_ext)
+            if tarfile_name not in self.map_coordinates_to_images:
+                continue
+            else:
+                snippets, snippet_filenames, image_names_no_ext = [], [], []
+                for image_name, image in self.yield_image_and_name(input_tarfile):
+                    image_name_no_ext = os.path.splitext(image_name)[0]
+                    for snippet_filename, snippet in self.yield_snippet_and_name(
+                        tarfile_name, image_name, image
+                    ):
+                        snippets.append(snippet)
+                        snippet_filenames.append(snippet_filename)
+                        image_names_no_ext.append(image_name_no_ext)
 
-                if len(snippets) == batch_size:
-                    yield tarfile_name_no_ext, image_names, snippet_names, snippets
-                    snippets, snippet_names, image_names = [], [], []
+                        if len(snippets) == batch_size:
+                            yield tarfile_name_no_ext, image_names_no_ext, snippet_filenames, snippets
+                            snippets, snippet_filenames, image_names_no_ext = [], [], []
 
-        if snippets and snippet_names:
-            yield tarfile_name_no_ext, image_names, snippet_names, snippets
+                if snippets and snippet_filenames:
+                    yield tarfile_name_no_ext, image_names_no_ext, snippet_filenames, snippets
+            
 
     def yield_image_and_name(self, input_tarfile: str):
         """
@@ -157,20 +175,26 @@ class SnippetGenerator:
         if ".gz" in os.path.basename(input_tarfile):
             read_param = "r:gz"
 
+        input_tarfile_basename = os.path.basename(input_tarfile)
+
         with tarfile.open(input_tarfile, read_param) as tar_in:
             for encoded_image in tar_in:
                 if encoded_image.isfile():
                     try:
                         image_filename = encoded_image.name
-                        img_data = Image.open(
-                            io.BytesIO(tar_in.extractfile(encoded_image).read())
-                        )
-                        yield image_filename, img_data
+                        if image_filename not in self.map_coordinates_to_images[input_tarfile_basename]:
+                            continue
+                        else:
+                            img_data = Image.open(
+                                io.BytesIO(tar_in.extractfile(encoded_image).read())
+                            )
+                            yield image_filename, img_data
+                            
                     except Exception as e:
                         print("An error occured: ", e)
 
     def yield_snippet_and_name(
-        self, tarfile_name: str, image_file_name: str, image: Image.Image
+        self, tarfile_name: str, image_filename: str, image: Image.Image
     ):
         """
         This function returns the snippets for an image and the future filename of the newly created snippet.
@@ -181,10 +205,10 @@ class SnippetGenerator:
             image: This is the PIL.Image that we will snip the snippets from.
         """
         for field_name, box_coordinates in self.map_coordinates_to_images[tarfile_name][
-            image_file_name
+            image_filename
         ]:
             yield (
-                f"{os.path.splitext(tarfile_name)[0]}_{os.path.splitext(image_file_name)[0]}_{field_name}.png",
+                f"{os.path.splitext(tarfile_name)[0]}_{os.path.splitext(image_filename)[0]}_{field_name}.png",
                 image.crop(box_coordinates),
             )
 

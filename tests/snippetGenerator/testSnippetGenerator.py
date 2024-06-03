@@ -234,7 +234,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         for expected_batch_size, (_, _, snippet_names, _) in zip(
             images_per_batch,
-            self.snippet_generator.get_batches_of_snippets(self.image_tar_path, 10),
+            self.snippet_generator.get_batches_of_snippets([self.image_tar_path], 10),
         ):
             if expected_batch_size != len(snippet_names):
                 batch_sizes_are_equal = False
@@ -259,40 +259,42 @@ class SnippetGenerator_Tests(unittest.TestCase):
         shutil.rmtree(out_dir)
 
     def test_save_snippets_as_tar(self):
-        out_dir = os.path.join("tests", "output")
 
-        if os.path.exists(out_dir):
+        for ext in [".tar.gz", ".tar"]:
+            out_dir = os.path.join("tests", "output")
+
+            if os.path.exists(out_dir):
+                shutil.rmtree(out_dir)
+
+            tarfile_in_name = os.path.splitext(os.path.basename(self.image_tar_path))[0]
+            tarfile_out_filename = tarfile_in_name + "_snippets" + ext
+
+            self.snippet_generator.save_snippets_as_tar([self.image_tar_path], out_dir, tarfile_out_filename)
+
+            assert tarfile_out_filename in os.listdir(out_dir)
+
+            try:
+                subprocess.run(
+                    [
+                        "tar",
+                        "-xf",
+                        os.path.join(out_dir, tarfile_out_filename),
+                        "-C",
+                        out_dir,
+                    ]
+                )
+                print("Extracted tarfile")
+            except subprocess.CalledProcessError as e:
+                print("Extraction failed: ")
+                print(e)
+
+            os.remove(os.path.join(out_dir, tarfile_out_filename))
+
+            snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(out_dir)
+
+            assert snippet_paths_are_equal
+
             shutil.rmtree(out_dir)
-
-        tarfile_in_name = os.path.splitext(os.path.basename(self.image_tar_path))[0]
-        tarfile_out_filename = tarfile_in_name + "_snippets.tar.gz"
-
-        self.snippet_generator.save_snippets_as_tar(self.image_tar_path, out_dir)
-
-        assert tarfile_out_filename in os.listdir(out_dir)
-
-        try:
-            subprocess.run(
-                [
-                    "tar",
-                    "-xf",
-                    os.path.join(out_dir, tarfile_out_filename),
-                    "-C",
-                    out_dir,
-                ]
-            )
-            print("Extracted tarfile")
-        except subprocess.CalledProcessError as e:
-            print("Extraction failed: ")
-            print(e)
-
-        os.remove(os.path.join(out_dir, tarfile_out_filename))
-
-        snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(out_dir)
-
-        assert snippet_paths_are_equal
-
-        shutil.rmtree(out_dir)
 
     def compare_actual_paths_to_expected_paths(self, out_dir: str):
         set_of_snippet_paths = set()
