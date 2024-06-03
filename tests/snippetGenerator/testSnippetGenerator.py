@@ -204,7 +204,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
                     "x4",
                 ],
             )
-            temp = self.dataframe_converter.convert_df_to_map(df)
+            self.dataframe_converter.convert_df_to_map(df)
         except Exception as e:
             assert (
                 e.__str__()
