@@ -155,12 +155,21 @@ class SnippetGenerator:
                         image_names_no_ext.append(image_name_no_ext)
 
                         if len(snippets) == batch_size:
-                            yield tarfile_name_no_ext, image_names_no_ext, snippet_filenames, snippets
+                            yield (
+                                tarfile_name_no_ext,
+                                image_names_no_ext,
+                                snippet_filenames,
+                                snippets,
+                            )
                             snippets, snippet_filenames, image_names_no_ext = [], [], []
 
                 if snippets and snippet_filenames:
-                    yield tarfile_name_no_ext, image_names_no_ext, snippet_filenames, snippets
-            
+                    yield (
+                        tarfile_name_no_ext,
+                        image_names_no_ext,
+                        snippet_filenames,
+                        snippets,
+                    )
 
     def yield_image_and_name(self, input_tarfile: str):
         """
@@ -182,14 +191,19 @@ class SnippetGenerator:
                 if encoded_image.isfile():
                     try:
                         image_filename = encoded_image.name
-                        if image_filename not in self.map_coordinates_to_images[input_tarfile_basename]:
+                        if (
+                            image_filename
+                            not in self.map_coordinates_to_images[
+                                input_tarfile_basename
+                            ]
+                        ):
                             continue
                         else:
                             img_data = Image.open(
                                 io.BytesIO(tar_in.extractfile(encoded_image).read())
                             )
                             yield image_filename, img_data
-                            
+
                     except Exception as e:
                         print("An error occured: ", e)
 

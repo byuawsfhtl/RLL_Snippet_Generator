@@ -259,7 +259,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
         shutil.rmtree(out_dir)
 
     def test_save_snippets_as_tar(self):
-
         for ext in [".tar.gz", ".tar"]:
             out_dir = os.path.join("tests", "output")
 
@@ -269,7 +268,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
             tarfile_in_name = os.path.splitext(os.path.basename(self.image_tar_path))[0]
             tarfile_out_filename = tarfile_in_name + "_snippets" + ext
 
-            self.snippet_generator.save_snippets_as_tar([self.image_tar_path], out_dir, tarfile_out_filename)
+            self.snippet_generator.save_snippets_as_tar(
+                [self.image_tar_path], out_dir, tarfile_out_filename
+            )
 
             assert tarfile_out_filename in os.listdir(out_dir)
 
@@ -290,7 +291,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
             os.remove(os.path.join(out_dir, tarfile_out_filename))
 
-            snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(out_dir)
+            snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(
+                out_dir
+            )
 
             assert snippet_paths_are_equal
 
