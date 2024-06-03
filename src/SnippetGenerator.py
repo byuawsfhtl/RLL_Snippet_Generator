@@ -88,7 +88,7 @@ class SnippetGenerator:
         """
         if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
             raise CustomException(
-                f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)}"
+                f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)[-1]}"
             )
 
         if not os.path.exists(output_directory):
@@ -97,9 +97,11 @@ class SnippetGenerator:
         outfile_path = os.path.join(output_directory, outfile)
 
         write_param = "w"
+        outfile_name_no_ext = os.path.splitext(outfile)[0]
 
-        if os.path.splitext(outfile)[-1] == "gz":
+        if outfile.endswith("gz"):
             write_param = "w:gz"
+            outfile_name_no_ext = os.path.splitext(outfile_name_no_ext)[0]
 
         with tarfile.open(outfile_path, write_param) as tar_out:
             for (
@@ -117,7 +119,10 @@ class SnippetGenerator:
                         snippet_byte_arr.seek(0)
 
                         tar_path = os.path.join(
-                            tarfile_name_no_ext, image_filename_no_ext, snippet_filename
+                            outfile_name_no_ext,
+                            tarfile_name_no_ext,
+                            image_filename_no_ext,
+                            snippet_filename,
                         )
 
                         snippet_info = tarfile.TarInfo(name=tar_path)
@@ -139,7 +144,16 @@ class SnippetGenerator:
 
         for input_tarfile in input_tarfiles:
             tarfile_name = os.path.basename(input_tarfile)
+
+            if not (tarfile_name.endswith(".tar") or tarfile_name.endswith(".tar.gz")):
+                raise CustomException(
+                    f"input tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(tarfile_name)}"
+                )
+
             tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
+
+            if tarfile_name.endswith(".tar.gz"):
+                tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
 
             if tarfile_name not in self.map_coordinates_to_images:
                 continue
@@ -181,7 +195,7 @@ class SnippetGenerator:
         """
 
         read_param = "r"
-        if ".gz" in os.path.basename(input_tarfile):
+        if input_tarfile.endswith("gz"):
             read_param = "r:gz"
 
         input_tarfile_basename = os.path.basename(input_tarfile)
