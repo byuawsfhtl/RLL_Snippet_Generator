@@ -250,7 +250,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
         else:
             os.makedirs(out_dir)
 
-        self.snippet_generator.save_snippets_to_directory([self.image_tar_path], out_dir)
+        self.snippet_generator.save_snippets_to_directory(
+            [self.image_tar_path], out_dir
+        )
 
         snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(out_dir)
 
