@@ -188,6 +188,29 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         assert all_image_names_in_dict
 
+        try:
+            df = pd.DataFrame(
+                [["reel_1.tar", "image_1.jpg", "person_name", 1, 1, 1, 2, 2, 1, 2]],
+                columns=[
+                    "reel_filename",
+                    "image_filename",
+                    "snip_name",
+                    "x1",
+                    "y1",
+                    "x2",
+                    "y2",
+                    "x3",
+                    "y3",
+                    "x4",
+                ],
+            )
+            temp = self.dataframe_converter.convert_df_to_map(df)
+        except Exception as e:
+            assert (
+                e.__str__()
+                == "CustomException: Dataframe doesn't have the necessary columns to work with Snippet Generator."
+            )
+
     def test_yield_image_and_name(self):
         test_image = Image.open(os.path.join("tests", "resources", "iowa.jpg"))
 
@@ -244,6 +267,17 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 batch_sizes_are_equal = False
 
         assert batch_sizes_are_equal
+
+        try:
+            for _, _, _, _ in self.snippet_generator.get_batches_of_snippets(
+                ["path/to/not_a_real_tarfile.tar", self.image_zip_path], 10
+            ):
+                pass
+        except Exception as e:
+            assert (
+                e.__str__()
+                == "CustomException: Input tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: .zip"
+            )
 
     def test_save_snippets_to_directory(self):
         out_dir = os.path.join("tests", "output")

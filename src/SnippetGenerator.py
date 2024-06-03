@@ -147,7 +147,7 @@ class SnippetGenerator:
 
             if not (tarfile_name.endswith(".tar") or tarfile_name.endswith(".tar.gz")):
                 raise CustomException(
-                    f"input tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(tarfile_name)}"
+                    f"Input tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(tarfile_name)[-1]}"
                 )
 
             tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
@@ -232,11 +232,17 @@ class SnippetGenerator:
             image_file_name: This is the name of the image file with the file extension.
             image: This is the PIL.Image that we will snip the snippets from.
         """
+        image_filename_no_ext = os.path.splitext(image_filename)[0]
+        tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
+
+        if tarfile_name.endswith("gz"):
+            tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
+
         for field_name, box_coordinates in self.map_coordinates_to_images[tarfile_name][
             image_filename
         ]:
             yield (
-                f"{os.path.splitext(tarfile_name)[0]}_{os.path.splitext(image_filename)[0]}_{field_name}.png",
+                f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field_name}.png",
                 image.crop(box_coordinates),
             )
 
