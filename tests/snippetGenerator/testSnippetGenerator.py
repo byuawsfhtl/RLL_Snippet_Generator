@@ -40,7 +40,12 @@ class SnippetGenerator_Tests(unittest.TestCase):
             "y4",
         ]
         self.image_tar_path = os.path.join("tests", "resources", "iowa_image.tar")
+        self.image_tar_path_compressed = os.path.join(
+            "tests", "resources", "iowa_image.tar.gz"
+        )
+        self.image_zip_path = os.path.join("tests", "resources", "iowa_image.zip")
         self.iowa_tsv_path = os.path.join("tests", "resources", "iowa.tsv")
+        self.snippet_tar_path = os.path.join("tests", "resources", "snippet.tar")
         self.df = pd.read_csv(self.iowa_tsv_path, sep="\t")
         self.snippet_generator = SnippetGenerator(self.df)
         self.dataframe_converter = DataFrame_to_Dictionary_converter()
@@ -184,6 +189,29 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         assert all_image_names_in_dict
 
+        try:
+            df = pd.DataFrame(
+                [["reel_1.tar", "image_1.jpg", "person_name", 1, 1, 1, 2, 2, 1, 2]],
+                columns=[
+                    "reel_filename",
+                    "image_filename",
+                    "snip_name",
+                    "x1",
+                    "y1",
+                    "x2",
+                    "y2",
+                    "x3",
+                    "y3",
+                    "x4",
+                ],
+            )
+            self.dataframe_converter.convert_df_to_map(df)
+        except Exception as e:
+            assert (
+                e.__str__()
+                == "CustomException: Dataframe doesn't have the necessary columns to work with Snippet Generator."
+            )
+
     def test_yield_image_and_name(self):
         test_image = Image.open(os.path.join("tests", "resources", "iowa.jpg"))
 
@@ -227,6 +255,31 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 else:
                     assert False
 
+        self.snippet_generator.map_coordinates_to_images["snippet.tar"] = {}
+        # (snip_name, box_coordinates) (left, upper, right, lower)
+        self.snippet_generator.map_coordinates_to_images["snippet.tar"][
+            "iowa_image_iowa_Card_No.png"
+        ] = [
+            ("Test_snip_1", (0, 0, 0, 0)),
+            ("Test_snip_2", (3, 3, 2, 5)),
+            ("Test_snip_3", (3, 3, 5, 2)),
+            ("Test_snip_4", (3, 3, 1, 1)),
+        ]
+
+        nothing_was_yielded = True
+
+        for image_name, image in self.snippet_generator.yield_image_and_name(
+            self.snippet_tar_path
+        ):
+            for snip_name, snippet in self.snippet_generator.yield_snippet_and_name(
+                os.path.basename(self.snippet_tar_path), image_name, image
+            ):
+                nothing_was_yielded = False
+
+        assert nothing_was_yielded
+
+        self.snippet_generator.map_coordinates_to_images.pop("snippet.tar")
+
     def test_get_batches_of_snippets(self):
         images_per_batch = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 1]
 
@@ -241,6 +294,17 @@ class SnippetGenerator_Tests(unittest.TestCase):
 
         assert batch_sizes_are_equal
 
+        try:
+            for _, _, _, _ in self.snippet_generator.get_batches_of_snippets(
+                ["path/to/not_a_real_tarfile.tar", self.image_zip_path], 10
+            ):
+                pass
+        except Exception as e:
+            assert (
+                e.__str__()
+                == "CustomException: Input tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: .zip"
+            )
+
     def test_save_snippets_to_directory(self):
         out_dir = os.path.join("tests", "output")
 
@@ -254,55 +318,77 @@ class SnippetGenerator_Tests(unittest.TestCase):
             [self.image_tar_path], out_dir
         )
 
-        snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(out_dir)
+        snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(
+            out_dir, None
+        )
 
         assert snippet_paths_are_equal
 
         shutil.rmtree(out_dir)
 
     def test_save_snippets_as_tar(self):
-        for ext in [".tar.gz", ".tar"]:
-            out_dir = os.path.join("tests", "output")
+        for archive_path in [self.image_tar_path, self.image_tar_path_compressed]:
+            for ext in [".tar.gz", ".tar"]:
+                out_dir = os.path.join("tests", "output")
 
-            if os.path.exists(out_dir):
+                if os.path.exists(out_dir):
+                    shutil.rmtree(out_dir)
+
+                tarfile_in_name = os.path.splitext(os.path.basename(archive_path))[0]
+                if archive_path.endswith("gz"):
+                    tarfile_in_name = os.path.splitext(tarfile_in_name)[0]
+
+                tarfile_out_filename_no_ext = tarfile_in_name + "_snippets"
+                tarfile_out_filename = tarfile_out_filename_no_ext + ext
+
+                self.snippet_generator.save_snippets_as_tar(
+                    [archive_path], out_dir, tarfile_out_filename
+                )
+
+                assert tarfile_out_filename in os.listdir(out_dir)
+
+                try:
+                    subprocess.run(
+                        [
+                            "tar",
+                            "-xf",
+                            os.path.join(out_dir, tarfile_out_filename),
+                            "-C",
+                            out_dir,
+                        ]
+                    )
+                    print("Extracted tarfile")
+                except subprocess.CalledProcessError as e:
+                    print("Extraction failed: ")
+                    print(e)
+
+                os.remove(os.path.join(out_dir, tarfile_out_filename))
+
+                snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(
+                    out_dir, tarfile_out_filename_no_ext
+                )
+
+                assert snippet_paths_are_equal
+
                 shutil.rmtree(out_dir)
 
-            tarfile_in_name = os.path.splitext(os.path.basename(self.image_tar_path))[0]
-            tarfile_out_filename = tarfile_in_name + "_snippets" + ext
-
+        try:
             self.snippet_generator.save_snippets_as_tar(
-                [self.image_tar_path], out_dir, tarfile_out_filename
+                [self.image_tar_path], None, "out.zip"
             )
 
-            assert tarfile_out_filename in os.listdir(out_dir)
-
-            try:
-                subprocess.run(
-                    [
-                        "tar",
-                        "-xf",
-                        os.path.join(out_dir, tarfile_out_filename),
-                        "-C",
-                        out_dir,
-                    ]
-                )
-                print("Extracted tarfile")
-            except subprocess.CalledProcessError as e:
-                print("Extraction failed: ")
-                print(e)
-
-            os.remove(os.path.join(out_dir, tarfile_out_filename))
-
-            snippet_paths_are_equal = self.compare_actual_paths_to_expected_paths(
-                out_dir
+        except Exception as e:
+            assert (
+                e.__str__()
+                == "CustomException: Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: .zip"
             )
 
-            assert snippet_paths_are_equal
-
-            shutil.rmtree(out_dir)
-
-    def compare_actual_paths_to_expected_paths(self, out_dir: str):
+    def compare_actual_paths_to_expected_paths(
+        self, out_dir: str, tarfile_out_filename_no_ext: str
+    ):
         set_of_snippet_paths = set()
+        if tarfile_out_filename_no_ext:
+            out_dir = os.path.join(out_dir, tarfile_out_filename_no_ext)
 
         df = pd.read_csv(self.iowa_tsv_path, sep="\t")
 

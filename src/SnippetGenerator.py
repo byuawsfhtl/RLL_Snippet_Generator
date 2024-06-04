@@ -88,7 +88,7 @@ class SnippetGenerator:
         """
         if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
             raise CustomException(
-                f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)}"
+                f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)[-1]}"
             )
 
         if not os.path.exists(output_directory):
@@ -97,9 +97,11 @@ class SnippetGenerator:
         outfile_path = os.path.join(output_directory, outfile)
 
         write_param = "w"
+        outfile_name_no_ext = os.path.splitext(outfile)[0]
 
-        if os.path.splitext(outfile)[-1] == "gz":
+        if outfile.endswith("gz"):
             write_param = "w:gz"
+            outfile_name_no_ext = os.path.splitext(outfile_name_no_ext)[0]
 
         with tarfile.open(outfile_path, write_param) as tar_out:
             for (
@@ -117,7 +119,10 @@ class SnippetGenerator:
                         snippet_byte_arr.seek(0)
 
                         tar_path = os.path.join(
-                            tarfile_name_no_ext, image_filename_no_ext, snippet_filename
+                            outfile_name_no_ext,
+                            tarfile_name_no_ext,
+                            image_filename_no_ext,
+                            snippet_filename,
                         )
 
                         snippet_info = tarfile.TarInfo(name=tar_path)
@@ -139,7 +144,16 @@ class SnippetGenerator:
 
         for input_tarfile in input_tarfiles:
             tarfile_name = os.path.basename(input_tarfile)
+
+            if not (tarfile_name.endswith(".tar") or tarfile_name.endswith(".tar.gz")):
+                raise CustomException(
+                    f"Input tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(tarfile_name)[-1]}"
+                )
+
             tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
+
+            if tarfile_name.endswith(".tar.gz"):
+                tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
 
             if tarfile_name not in self.map_coordinates_to_images:
                 continue
@@ -181,7 +195,7 @@ class SnippetGenerator:
         """
 
         read_param = "r"
-        if ".gz" in os.path.basename(input_tarfile):
+        if input_tarfile.endswith("gz"):
             read_param = "r:gz"
 
         input_tarfile_basename = os.path.basename(input_tarfile)
@@ -218,12 +232,34 @@ class SnippetGenerator:
             image_file_name: This is the name of the image file with the file extension.
             image: This is the PIL.Image that we will snip the snippets from.
         """
+        image_filename_no_ext = os.path.splitext(image_filename)[0]
+        tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
+
+        if tarfile_name.endswith("gz"):
+            tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
+
         for field_name, box_coordinates in self.map_coordinates_to_images[tarfile_name][
             image_filename
         ]:
-            yield (
-                f"{os.path.splitext(tarfile_name)[0]}_{os.path.splitext(image_filename)[0]}_{field_name}.png",
-                image.crop(box_coordinates),
+            try:
+                self.validate_box_coordinates(box_coordinates)
+
+                yield (
+                    f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field_name}.png",
+                    image.crop(box_coordinates),
+                )
+            except Exception as e:
+                print("Error occured: ", e)
+                continue
+
+    def validate_box_coordinates(self, box_coordinates: tuple):
+        if (box_coordinates[2] - box_coordinates[0]) <= 0:
+            raise CustomException(
+                f"The width of the cropped image must be positive and nonzero. Left and right box coordinates: {box_coordinates[0]}, {box_coordinates[2]}"
+            )
+        if (box_coordinates[3] - box_coordinates[1]) <= 0:
+            raise CustomException(
+                f"The height of the cropped image must be positive and nonzero. Top and bottom box coordinates: {box_coordinates[1]}, {box_coordinates[3]}"
             )
 
 
