@@ -45,6 +45,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         )
         self.image_zip_path = os.path.join("tests", "resources", "iowa_image.zip")
         self.iowa_tsv_path = os.path.join("tests", "resources", "iowa.tsv")
+        self.snippet_tar_path = os.path.join("tests", "resources", "snippet.tar")
         self.df = pd.read_csv(self.iowa_tsv_path, sep="\t")
         self.snippet_generator = SnippetGenerator(self.df)
         self.dataframe_converter = DataFrame_to_Dictionary_converter()
@@ -253,6 +254,31 @@ class SnippetGenerator_Tests(unittest.TestCase):
                     break
                 else:
                     assert False
+
+        self.snippet_generator.map_coordinates_to_images["snippet.tar"] = {}
+        # (snip_name, box_coordinates) (left, upper, right, lower)
+        self.snippet_generator.map_coordinates_to_images["snippet.tar"][
+            "iowa_image_iowa_Card_No.png"
+        ] = [
+            ("Test_snip_1", (0, 0, 0, 0)),
+            ("Test_snip_2", (3, 3, 2, 5)),
+            ("Test_snip_3", (3, 3, 5, 2)),
+            ("Test_snip_4", (3, 3, 1, 1)),
+        ]
+
+        nothing_was_yielded = True
+
+        for image_name, image in self.snippet_generator.yield_image_and_name(
+            self.snippet_tar_path
+        ):
+            for snip_name, snippet in self.snippet_generator.yield_snippet_and_name(
+                os.path.basename(self.snippet_tar_path), image_name, image
+            ):
+                nothing_was_yielded = False
+
+        assert nothing_was_yielded
+
+        self.snippet_generator.map_coordinates_to_images.pop("snippet.tar")
 
     def test_get_batches_of_snippets(self):
         images_per_batch = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 1]

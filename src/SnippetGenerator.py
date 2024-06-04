@@ -241,9 +241,25 @@ class SnippetGenerator:
         for field_name, box_coordinates in self.map_coordinates_to_images[tarfile_name][
             image_filename
         ]:
-            yield (
-                f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field_name}.png",
-                image.crop(box_coordinates),
+            try:
+                self.validate_box_coordinates(box_coordinates)
+
+                yield (
+                    f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field_name}.png",
+                    image.crop(box_coordinates),
+                )
+            except Exception as e:
+                print("Error occured: ", e)
+                continue
+
+    def validate_box_coordinates(self, box_coordinates: tuple):
+        if (box_coordinates[2] - box_coordinates[0]) <= 0:
+            raise CustomException(
+                f"The width of the cropped image must be positive and nonzero. Left and right box coordinates: {box_coordinates[0]}, {box_coordinates[2]}"
+            )
+        if (box_coordinates[3] - box_coordinates[1]) <= 0:
+            raise CustomException(
+                f"The height of the cropped image must be positive and nonzero. Top and bottom box coordinates: {box_coordinates[1]}, {box_coordinates[3]}"
             )
 
 
