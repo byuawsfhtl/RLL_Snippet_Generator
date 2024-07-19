@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import argparse
-import json
 
 
 def read_in_shapes(lm_path):
@@ -16,10 +15,12 @@ def read_in_shapes(lm_path):
 
 
 def convert_labelme_to_snippet_generator_format(lm_path, out_dir, reel_filename, image_filename):
+    # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row tuple
     shapes = read_in_shapes(lm_path)
     rows = []
     for shape in shapes:
-        print(shape["label"])
+        snip_name = shape["label"]
+        
     
 
         
