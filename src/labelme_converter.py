@@ -26,6 +26,7 @@ def convert_labelme_to_snippet_generator_format(lm_path, out_dir, reel_filename,
             row.append(point[0]) # x
             row.append(point[1]) # y
         rows.append(row)
+        # A comment so this is modified
     
 
         
