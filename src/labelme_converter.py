@@ -15,11 +15,19 @@ def read_in_shapes(lm_path):
 
 
 def convert_labelme_to_snippet_generator_format(lm_path, out_dir, reel_filename, image_filename):
-    # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row tuple
+    # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
     shapes = read_in_shapes(lm_path)
     rows = []
     for shape in shapes:
-        snip_name = shape["label"]
+        # row format: reel_filename, image_filename, snip_name, x1, y1, x2...y4
+        row = [reel_filename, image_filename]
+        row.append(shape["label"]) # snip_name
+        for point in shape["points"]:
+            row.append(point[0]) # x
+            row.append(point[1]) # y
+        rows.append(row)
+    
+
         
     
 
@@ -46,7 +54,7 @@ if __name__ == "__main__":
     CORRECT_EXTENSION = ".json"
     _, file_extension = os.path.splitext(lm_path)
     if file_extension != CORRECT_EXTENSION:
-        raise FileNotFoundError(f"File is not a {expected_extension} file.")
+        raise FileNotFoundError(f"File is not a {CORRECT_EXTENSION} file.")
 
     # Set path to output directory
     out_dir = args.output_directory_path
