@@ -51,23 +51,16 @@ class LabelMe_Converter:
 
 
 
-        
-    
-
-        
-
-
-
 if __name__ == "__main__":
     # Command line parameters
     parser = argparse.ArgumentParser(description="Convert a LabelMe file to a .tsv file in snippet generator format")
     parser.add_argument("labelme_filepath", type=str, help="The input file in LabelMe format to be converted to snippet generator format")
-    parser.add_argument("output_directory_path", type=str, help="Where to put the output tsv file")
     parser.add_argument("reel_filename", type=str, help="The reel tar file the corresponding image came from. Used to fill the 'reel_filename' column of the output tsv.")
     parser.add_argument("image_filename", type=str, help="The filename of the corresponding image. Used to fill the 'image_filename' column of the output tsv.")
+    parser.add_argument("output_directory_path", type=str, help="Where to put the output tsv file")
 
     if len(sys.argv) != 4:
-        print('Usage: <labelme_filepath> <output_directory_path> <reel_filename> <image_filename>')
+        print('Usage: <labelme_filepath> <reel_filename> <image_filename> <output_directory_path>')
     args = parser.parse_args()
 
     # Check input file path and type
@@ -87,7 +80,7 @@ if __name__ == "__main__":
 
     lm_converter = LabelMe_Converter()
 
-    lm_converter.convert_labelme_to_snippet_generator_format(lm_path, args.reel_filename, args.image_filename, out_dir)
+    lm_converter.convert_to_tsv(lm_path, args.reel_filename, args.image_filename, out_dir)
 
 
     
