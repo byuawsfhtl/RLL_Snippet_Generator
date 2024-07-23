@@ -2,32 +2,54 @@ import os
 import sys
 import json
 import argparse
+import pandas as pd
 
 
-def read_in_shapes(lm_path):
-    # The main part of a LabelMe file is its 'shapes' list. This function reads in the JSON file and returns that list.
-    try:
-        with open(lm_path, 'r') as file:
-            labelme = json.load(file)
-            return labelme['shapes']
-    except Exception as e:
-        print(f'Error while processing LabelMe file: {e}')
+class LabelMe_Converter:
+    def read_in_shapes(self, lm_path):
+        '''
+        The main part of a LabelMe file is its 'shapes' list. This function reads in the JSON file and returns that list.
+        '''
+        try:
+            with open(lm_path, 'r') as file:
+                labelme = json.load(file)
+                return labelme['shapes']
+        except Exception as e:
+            print(f'Error while processing LabelMe file: {e}')
 
 
-def convert_labelme_to_snippet_generator_format(lm_path, out_dir, reel_filename, image_filename):
-    # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
-    shapes = read_in_shapes(lm_path)
-    rows = []
-    for shape in shapes:
-        # row format: reel_filename, image_filename, snip_name, x1, y1, x2...y4
-        row = [reel_filename, image_filename]
-        row.append(shape["label"]) # snip_name
-        for point in shape["points"]:
-            row.append(point[0]) # x
-            row.append(point[1]) # y
-        rows.append(row)
-        # A comment so this is modified
+    def convert_labelme_to_snippet_generator_format(self, lm_path, reel_filename, image_filename):
+        # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
+        shapes = self.read_in_shapes(lm_path)
+        rows = []
+        for shape in shapes:
+            # row format: reel_filename, image_filename, snip_name, x1, y1, x2...y4
+            row = [reel_filename, image_filename]
+            row.append(shape["label"]) # snip_name
+            for point in shape["points"]:
+                row.append(point[0]) # x
+                row.append(point[1]) # y
+            rows.append(row)
+        
+        df = pd.DataFrame(rows, columns=['reel_filename', 'image_filename', 'snip_name', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4'])
+        return df
     
+    def convert_to_tsv(self, lm_path, reel_filename, image_filename, out_dir):
+        # Convert the LabelMe to a pandas DataFrame
+        df = self.convert_labelme_to_snippet_generator_format(lm_path, reel_filename, image_filename)
+        # Find output name and path
+        input_file_name = os.path.splitext(os.path.basename(lm_path))[0]
+        output_file_name = f'{input_file_name}.tsv'
+        output_path = os.path.join(out_dir, output_file_name)
+        # Output to tsv
+        try:
+            df.to_csv(output_path, sep='\t', index=False)
+            print(f'LabelMe converted to a .tsv in snippet generator format at {output_path}')
+        except Exception as e:
+            print(f'ERROR: writing to a .tsv file at {output_file_name} failed with this exception: {e}')
+
+
+
 
         
     
@@ -63,7 +85,9 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
     print(f'Output set to {out_dir}')
 
-    convert_labelme_to_snippet_generator_format(lm_path, out_dir, args.reel_filename, args.image_filename)
+    lm_converter = LabelMe_Converter()
+
+    lm_converter.convert_labelme_to_snippet_generator_format(lm_path, args.reel_filename, args.image_filename, out_dir)
 
 
     
