@@ -10,6 +10,7 @@ class LabelMe_Converter:
         '''
         The main part of a LabelMe file is its 'shapes' list. This function reads in the JSON file and returns that list.
         '''
+        print('Reading in file...')
         try:
             with open(lm_path, 'r') as file:
                 labelme = json.load(file)
@@ -19,6 +20,8 @@ class LabelMe_Converter:
 
 
     def convert_labelme_to_snippet_generator_format(self, lm_path, reel_filename, image_filename):
+        # The current snippet generator format has 11 rows
+        EXPECTED_ROW_LENGTH = 11
         # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
         shapes = self.read_in_shapes(lm_path)
         rows = []
@@ -29,6 +32,11 @@ class LabelMe_Converter:
             for point in shape["points"]:
                 row.append(point[0]) # x
                 row.append(point[1]) # y
+            row_length = len(row)
+            if row_length != EXPECTED_ROW_LENGTH:
+                print(f'ERROR: Unsuccessful extraction on current row. Number of columns is {row_length} instead of {EXPECTED_ROW_LENGTH}, so this row will be skipped. Extracted information:')
+                print(row)
+                continue
             rows.append(row)
         
         df = pd.DataFrame(rows, columns=['reel_filename', 'image_filename', 'snip_name', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4'])
