@@ -1,3 +1,15 @@
+'''
+This file contains the LabelMe_Converter class, which is used to convert LabelMe files to snippet generator format.
+
+When this script is run with command line arguments, LabelMe_Converter automatically saves the converted contents to a .tsv file with 
+the same name as the LabelMe file.
+Usage: <labelme_filepath> <reel_filename> <image_filename> <output_directory_path>
+
+When this module is used within a script, LabelMe_Converter can either return a pandas DataFrame or save to a .tsv.
+
+'''
+
+
 import os
 import sys
 import json
@@ -19,7 +31,7 @@ class LabelMe_Converter:
             print(f'Error while processing LabelMe file: {e}')
 
 
-    def convert_labelme_to_snippet_generator_format(self, lm_path, reel_filename, image_filename):
+    def convert_to_dataframe(self, lm_path, reel_filename, image_filename):
         # The current snippet generator format has 11 rows
         EXPECTED_ROW_LENGTH = 11
         # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
@@ -44,7 +56,7 @@ class LabelMe_Converter:
     
     def convert_to_tsv(self, lm_path, reel_filename, image_filename, out_dir):
         # Convert the LabelMe to a pandas DataFrame
-        df = self.convert_labelme_to_snippet_generator_format(lm_path, reel_filename, image_filename)
+        df = self.convert_to_dataframe(lm_path, reel_filename, image_filename)
         # Find output name and path
         input_file_name = os.path.splitext(os.path.basename(lm_path))[0]
         output_file_name = f'{input_file_name}.tsv'
