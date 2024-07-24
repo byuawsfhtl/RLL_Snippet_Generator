@@ -6,7 +6,8 @@ the same name as the LabelMe file.
 Usage: <labelme_filepath> <reel_filename> <image_filename> <output_directory_path>
 
 When this module is used within a script, LabelMe_Converter can either return a pandas DataFrame or save to a .tsv.
-
+To return a DataFrame, use: convert_to_dataframe(labelme_path, reel_filename, image_filename)
+To save to a .tsv, use: convert_to_tsv(labelme_path, reel_filename, image_filename, out_dir)
 '''
 
 
@@ -18,24 +19,35 @@ import pandas as pd
 
 
 class LabelMe_Converter:
-    def read_in_shapes(self, lm_path):
+    def read_in_shapes(self, labelme_path):
         '''
-        The main part of a LabelMe file is its 'shapes' list. This function reads in the JSON file and returns that list.
+        This function reads in the LabelMe file and returns the "shapes" list.
+
+        Args:
+         labelme_path: filepath to the LabelMe file being converted
         '''
         print('Reading in file...')
         try:
-            with open(lm_path, 'r') as file:
+            with open(labelme_path, 'r') as file:
                 labelme = json.load(file)
                 return labelme['shapes']
         except Exception as e:
             print(f'Error while processing LabelMe file: {e}')
 
 
-    def convert_to_dataframe(self, lm_path, reel_filename, image_filename):
+    def convert_to_dataframe(self, labelme_path, reel_filename, image_filename):
+        '''
+        This function extracts the shapes from a LabelMe file and converts the contents into a pandas DataFrame in snippet generator format.
+
+        Args:
+        labelme_path: filepath to the LabelMe file being converted
+        reel_filename: the reel tar filename the corresponding image came from. Used to fill the 'reel_filename' column of the output tsv
+        image_filename: the filename of the corresponding image. Used to fill the 'image_filename' column of the output tsv
+        '''
         # The current snippet generator format has 11 rows
         EXPECTED_ROW_LENGTH = 11
         # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
-        shapes = self.read_in_shapes(lm_path)
+        shapes = self.read_in_shapes(labelme_path)
         rows = []
         for shape in shapes:
             # row format: reel_filename, image_filename, snip_name, x1, y1, x2...y4
@@ -54,11 +66,21 @@ class LabelMe_Converter:
         df = pd.DataFrame(rows, columns=['reel_filename', 'image_filename', 'snip_name', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4'])
         return df
     
-    def convert_to_tsv(self, lm_path, reel_filename, image_filename, out_dir):
+    def convert_to_tsv(self, labelme_path, reel_filename, image_filename, out_dir):
+        '''
+        This function calls convert_to_dataframe(), then outputs the dataframe to a .tsv file.
+
+        Args:
+        labelme_path: filepath to the LabelMe file being converted
+        reel_filename: the reel tar filename the corresponding image came from. Used to fill the 'reel_filename' column of the output tsv
+        image_filename: the filename of the corresponding image. Used to fill the 'image_filename' column of the output tsv
+        out_dir: filepath to the desired output directory (where the .tsv file will be saved)
+        '''
+
         # Convert the LabelMe to a pandas DataFrame
-        df = self.convert_to_dataframe(lm_path, reel_filename, image_filename)
+        df = self.convert_to_dataframe(labelme_path, reel_filename, image_filename)
         # Find output name and path
-        input_file_name = os.path.splitext(os.path.basename(lm_path))[0]
+        input_file_name = os.path.splitext(os.path.basename(labelme_path))[0]
         output_file_name = f'{input_file_name}.tsv'
         output_path = os.path.join(out_dir, output_file_name)
         # Output to tsv
@@ -67,7 +89,6 @@ class LabelMe_Converter:
             print(f'LabelMe converted to a .tsv in snippet generator format at {output_path}')
         except Exception as e:
             print(f'ERROR: writing to a .tsv file at {output_file_name} failed with this exception: {e}')
-
 
 
 
@@ -84,11 +105,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Check input file path and type
-    lm_path = args.labelme_filepath
-    if not os.path.isfile(lm_path):
-        raise FileNotFoundError(f"LabelMe file does not exist: {lm_path}")
+    labelme_path = args.labelme_filepath
+    if not os.path.isfile(labelme_path):
+        raise FileNotFoundError(f"LabelMe file does not exist: {labelme_path}")
     CORRECT_EXTENSION = ".json"
-    _, file_extension = os.path.splitext(lm_path)
+    _, file_extension = os.path.splitext(labelme_path)
     if file_extension != CORRECT_EXTENSION:
         raise FileNotFoundError(f"File is not a {CORRECT_EXTENSION} file.")
 
@@ -98,9 +119,10 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
     print(f'Output set to {out_dir}')
 
+    # Instantiate a LabelMe_Converter object
     lm_converter = LabelMe_Converter()
-
-    lm_converter.convert_to_tsv(lm_path, args.reel_filename, args.image_filename, out_dir)
+    # Extract, convert, and output to .tsv
+    lm_converter.convert_to_tsv(labelme_path, args.reel_filename, args.image_filename, out_dir)
 
 
     
