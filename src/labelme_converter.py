@@ -1,5 +1,6 @@
 '''
 This file contains the LabelMe_Converter class, which is used to convert LabelMe files to snippet generator format.
+LabelMe JSON --> Pandas DataFrame (in Snippet Generator format) --> Output TSV (optional)
 
 When this script is run with command line arguments, LabelMe_Converter automatically saves the converted contents to a .tsv file with 
 the same name as the LabelMe file.
@@ -8,6 +9,12 @@ Usage: <labelme_filepath> <reel_filename> <image_filename> <output_directory_pat
 When this module is used within a script, LabelMe_Converter can either return a pandas DataFrame or save to a .tsv.
 To return a DataFrame, use: convert_to_dataframe(labelme_path, reel_filename, image_filename)
 To save to a .tsv, use: convert_to_tsv(labelme_path, reel_filename, image_filename, out_dir)
+
+The information is converted in the following way:
+shape["label"] --> snip_name
+shape["points"] --> x1,y1,x2,y2,x3,y3,x4,y4
+reel_filename supplied by user
+image_filename supplied by user
 '''
 
 
