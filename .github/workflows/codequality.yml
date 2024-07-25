@@ -2,6 +2,8 @@ name: Lint and Format
 
 on: 
   push:  # runs the jobs on every push
+    branches:
+      - main
 
 jobs:
   code-quality:

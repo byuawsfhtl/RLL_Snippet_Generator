@@ -54,14 +54,17 @@ class SnippetGenerator:
         for (
             tarfile_name_no_ext,
             image_filenames_no_ext,
-            snippet_filenames,
+            fields,
             snippets,
         ) in self.get_batches_of_snippets(input_tarfiles, batch_size):
-            for image_filename_no_ext, snippet_filename, snippet in zip(
-                image_filenames_no_ext, snippet_filenames, snippets
+            for image_filename_no_ext, field, snippet in zip(
+                image_filenames_no_ext, fields, snippets
             ):
                 snippet_directory = os.path.join(
                     output_directory, tarfile_name_no_ext, image_filename_no_ext
+                )
+                snippet_filename = (
+                    f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field}.png"
                 )
                 path_to_snippet = os.path.join(snippet_directory, snippet_filename)
 
@@ -107,17 +110,20 @@ class SnippetGenerator:
             for (
                 tarfile_name_no_ext,
                 image_filenames_no_ext,
-                snippet_filenames,
+                fields,
                 snippets,
             ) in self.get_batches_of_snippets(input_tarfiles, batch_size):
-                for image_filename_no_ext, snippet_filename, snippet in zip(
-                    image_filenames_no_ext, snippet_filenames, snippets
+                for image_filename_no_ext, field, snippet in zip(
+                    image_filenames_no_ext, fields, snippets
                 ):
                     try:
                         snippet_byte_arr = io.BytesIO()
                         snippet.save(snippet_byte_arr, format="PNG")
                         snippet_byte_arr.seek(0)
 
+                        snippet_filename = (
+                            f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field}.png"
+                        )
                         tar_path = os.path.join(
                             outfile_name_no_ext,
                             tarfile_name_no_ext,
