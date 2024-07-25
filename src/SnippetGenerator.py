@@ -155,33 +155,32 @@ class SnippetGenerator:
             if tarfile_name.endswith(".tar.gz"):
                 tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
 
-            if tarfile_name not in self.map_coordinates_to_images:
+            if tarfile_name_no_ext not in self.map_coordinates_to_images:
                 continue
             else:
-                snippets, snippet_filenames, image_names_no_ext = [], [], []
+                snippets, fields, image_names = [], [], []
                 for image_name, image in self.yield_image_and_name(input_tarfile):
-                    image_name_no_ext = os.path.splitext(image_name)[0]
-                    for snippet_filename, snippet in self.yield_snippet_and_name(
-                        tarfile_name, image_name, image
+                    for field, snippet in self.yield_snippet_and_field(
+                        tarfile_name_no_ext, image_name, image
                     ):
                         snippets.append(snippet)
-                        snippet_filenames.append(snippet_filename)
-                        image_names_no_ext.append(image_name_no_ext)
+                        fields.append(field)
+                        image_names.append(image_name)
 
                         if len(snippets) == batch_size:
                             yield (
                                 tarfile_name_no_ext,
-                                image_names_no_ext,
-                                snippet_filenames,
+                                image_names,
+                                fields,
                                 snippets,
                             )
-                            snippets, snippet_filenames, image_names_no_ext = [], [], []
+                            snippets, fields, image_names = [], [], []
 
-                if snippets and snippet_filenames:
+                if snippets and fields:
                     yield (
                         tarfile_name_no_ext,
-                        image_names_no_ext,
-                        snippet_filenames,
+                        image_names,
+                        fields,
                         snippets,
                     )
 
@@ -195,20 +194,23 @@ class SnippetGenerator:
         """
 
         read_param = "r"
+        input_reel_name = os.path.splitext(os.path.basename(input_tarfile))[0]
+
         if input_tarfile.endswith("gz"):
             read_param = "r:gz"
-
-        input_tarfile_basename = os.path.basename(input_tarfile)
+            input_reel_name = os.path.splitext(input_reel_name)[0]
+        
 
         with tarfile.open(input_tarfile, read_param) as tar_in:
             for encoded_image in tar_in:
                 if encoded_image.isfile():
                     try:
                         image_filename = encoded_image.name
+                        image_name = os.path.splitext(os.path.basename(image_filename))[0]
                         if (
-                            image_filename
+                            image_name
                             not in self.map_coordinates_to_images[
-                                input_tarfile_basename
+                                input_reel_name
                             ]
                         ):
                             continue
@@ -216,13 +218,13 @@ class SnippetGenerator:
                             img_data = Image.open(
                                 io.BytesIO(tar_in.extractfile(encoded_image).read())
                             )
-                            yield image_filename, img_data
+                            yield image_name, img_data
 
                     except Exception as e:
                         print("An error occured: ", e)
 
-    def yield_snippet_and_name(
-        self, tarfile_name: str, image_filename: str, image: Image.Image
+    def yield_snippet_and_field(
+        self, reel_name: str, image_name: str, image: Image.Image
     ):
         """
         This function returns the snippets for an image and the future filename of the newly created snippet.
@@ -232,20 +234,15 @@ class SnippetGenerator:
             image_file_name: This is the name of the image file with the file extension.
             image: This is the PIL.Image that we will snip the snippets from.
         """
-        image_filename_no_ext = os.path.splitext(image_filename)[0]
-        tarfile_name_no_ext = os.path.splitext(tarfile_name)[0]
 
-        if tarfile_name.endswith("gz"):
-            tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
-
-        for field_name, box_coordinates in self.map_coordinates_to_images[tarfile_name][
-            image_filename
+        for field_name, box_coordinates in self.map_coordinates_to_images[reel_name][
+            image_name
         ]:
             try:
                 self.validate_box_coordinates(box_coordinates)
 
                 yield (
-                    f"{tarfile_name_no_ext}_{image_filename_no_ext}_{field_name}.png",
+                    field_name,
                     image.crop(box_coordinates),
                 )
             except Exception as e:
