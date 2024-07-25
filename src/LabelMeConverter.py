@@ -1,12 +1,12 @@
 '''
-This file contains the LabelMe_Converter class, which is used to convert LabelMe files to snippet generator format.
+This file contains the LabelMeConverter class, which is used to convert LabelMe files to snippet generator format.
 LabelMe JSON --> Pandas DataFrame (in Snippet Generator format) --> Output TSV (optional)
 
-When this script is run with command line arguments, LabelMe_Converter automatically saves the converted contents to a .tsv file with 
+When this script is run with command line arguments, LabelMeConverter automatically saves the converted contents to a .tsv file with 
 the same name as the LabelMe file.
 Usage: <labelme_filepath> <reel_filename> <image_filename> <output_directory_path>
 
-When this module is used within a script, LabelMe_Converter can either return a pandas DataFrame or save to a .tsv.
+When this module is used within a script, LabelMeConverter can either return a pandas DataFrame or save to a .tsv.
 To return a DataFrame, use: convert_to_dataframe(labelme_path, reel_filename, image_filename)
 To save to a .tsv, use: convert_to_tsv(labelme_path, reel_filename, image_filename, out_dir)
 
@@ -25,7 +25,7 @@ import argparse
 import pandas as pd
 
 
-class LabelMe_Converter:
+class LabelMeConverter:
     def read_in_shapes(self, labelme_path):
         '''
         This function reads in the LabelMe file and returns the "shapes" list.
@@ -126,8 +126,8 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
     print(f'Output set to {out_dir}')
 
-    # Instantiate a LabelMe_Converter object
-    lm_converter = LabelMe_Converter()
+    # Instantiate a LabelMeConverter object
+    lm_converter = LabelMeConverter()
     # Extract, convert, and output to .tsv
     lm_converter.convert_to_tsv(labelme_path, args.reel_filename, args.image_filename, out_dir)
 
