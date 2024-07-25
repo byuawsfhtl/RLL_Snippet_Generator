@@ -33,11 +33,25 @@ class LabelMeConverter:
         Args:
          labelme_path: filepath to the LabelMe file being converted
         '''
+        # Check file exists
+        if not os.path.isfile(labelme_path):
+            raise FileNotFoundError(f"LabelMe file does not exist: {labelme_path}")
         print('Reading in file...')
+        
+        # Check file is a JSON file
+        CORRECT_EXTENSION = ".json"
+        _, file_extension = os.path.splitext(labelme_path)
+        if file_extension != CORRECT_EXTENSION:
+            raise ValueError(f"File is not a {CORRECT_EXTENSION} file.")
+
+        # Read in file and return the shapes list
         try:
             with open(labelme_path, 'r') as file:
                 labelme = json.load(file)
-                return labelme['shapes']
+                if labelme['shapes']:
+                    return labelme['shapes']
+                else:
+                    raise ValueError("Shapes list not found in LabelMe file")
         except Exception as e:
             print(f'Error while processing LabelMe file: {e}')
 
@@ -84,6 +98,11 @@ class LabelMeConverter:
         out_dir: filepath to the desired output directory (where the .tsv file will be saved)
         '''
 
+        # Check output directory
+        if not os.path.isdir(out_dir):
+            raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
+        print(f'Output set to {out_dir}')
+
         # Convert the LabelMe to a pandas DataFrame
         df = self.convert_to_dataframe(labelme_path, reel_filename, image_filename)
         # Find output name and path
@@ -113,19 +132,9 @@ if __name__ == "__main__":
 
     # Check input file path and type
     labelme_path = args.labelme_filepath
-    if not os.path.isfile(labelme_path):
-        raise FileNotFoundError(f"LabelMe file does not exist: {labelme_path}")
-    CORRECT_EXTENSION = ".json"
-    _, file_extension = os.path.splitext(labelme_path)
-    if file_extension != CORRECT_EXTENSION:
-        raise FileNotFoundError(f"File is not a {CORRECT_EXTENSION} file.")
 
     # Set path to output directory
     out_dir = args.output_directory_path
-    if not os.path.isdir(out_dir):
-        raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
-    print(f'Output set to {out_dir}')
-
     # Instantiate a LabelMeConverter object
     lm_converter = LabelMeConverter()
     # Extract, convert, and output to .tsv
