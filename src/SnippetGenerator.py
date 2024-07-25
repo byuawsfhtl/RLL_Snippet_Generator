@@ -199,19 +199,18 @@ class SnippetGenerator:
         if input_tarfile.endswith("gz"):
             read_param = "r:gz"
             input_reel_name = os.path.splitext(input_reel_name)[0]
-        
 
         with tarfile.open(input_tarfile, read_param) as tar_in:
             for encoded_image in tar_in:
                 if encoded_image.isfile():
                     try:
                         image_filename = encoded_image.name
-                        image_name = os.path.splitext(os.path.basename(image_filename))[0]
+                        image_name = os.path.splitext(os.path.basename(image_filename))[
+                            0
+                        ]
                         if (
                             image_name
-                            not in self.map_coordinates_to_images[
-                                input_reel_name
-                            ]
+                            not in self.map_coordinates_to_images[input_reel_name]
                         ):
                             continue
                         else:
