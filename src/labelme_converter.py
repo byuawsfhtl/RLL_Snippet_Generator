@@ -10,7 +10,7 @@ When this module is used within a script, LabelMe_Converter can either return a 
 To return a DataFrame, use: convert_to_dataframe(labelme_path, reel_filename, image_filename)
 To save to a .tsv, use: convert_to_tsv(labelme_path, reel_filename, image_filename, out_dir)
 
-The information is converted in the following way:
+The information is converted in the following ways:
 shape["label"] --> snip_name
 shape["points"] --> x1,y1,x2,y2,x3,y3,x4,y4
 reel_filename supplied by user
