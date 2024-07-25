@@ -238,7 +238,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
             self.image_tar_path
         ):
             for field, snippet in self.snippet_generator.yield_snippet_and_field(
-                os.path.splitext(os.path.basename(self.image_tar_path))[0], image_name, image
+                os.path.splitext(os.path.basename(self.image_tar_path))[0],
+                image_name,
+                image,
             ):
                 assert field == "Card_No"
 
@@ -272,7 +274,9 @@ class SnippetGenerator_Tests(unittest.TestCase):
             self.snippet_tar_path
         ):
             for snip_name, snippet in self.snippet_generator.yield_snippet_and_field(
-                os.path.splitext(os.path.basename(self.snippet_tar_path))[0], image_name, image
+                os.path.splitext(os.path.basename(self.snippet_tar_path))[0],
+                image_name,
+                image,
             ):
                 nothing_was_yielded = False
 
