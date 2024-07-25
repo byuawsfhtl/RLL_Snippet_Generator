@@ -13,7 +13,7 @@ REEL_NAME="test_reel_name_000.tar"
 IMAGE_NAME="test_image_name_000.jpg"
 
 converter = LabelMe_Converter()
-df = converter.convert_labelme_to_snippet_generator_format(LABELME, REEL_NAME, IMAGE_NAME)
+df = converter.convert_to_dataframe(LABELME, REEL_NAME, IMAGE_NAME)
 print(df)
 
 
