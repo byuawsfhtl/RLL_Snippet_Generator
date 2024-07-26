@@ -1,7 +1,7 @@
 name: Lint and Format
 
 on: 
-  push:  # runs the jobs on every push
+  push:  # runs the jobs on every push to main
     branches:
       - main
 

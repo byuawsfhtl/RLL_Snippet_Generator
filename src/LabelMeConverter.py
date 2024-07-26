@@ -42,16 +42,17 @@ class LabelMeConverter:
         CORRECT_EXTENSION = ".json"
         _, file_extension = os.path.splitext(labelme_path)
         if file_extension != CORRECT_EXTENSION:
-            raise ValueError(f"File is not a {CORRECT_EXTENSION} file.")
+            raise ValueError(f"LabelMe file parameter extension is '{file_extension}'; expected '{CORRECT_EXTENSION}'.")
 
         # Read in file and return the shapes list
         try:
             with open(labelme_path, 'r') as file:
                 labelme = json.load(file)
-                if labelme['shapes']:
+                if (labelme['shapes']) and len(labelme['shapes'] > 0):
                     return labelme['shapes']
                 else:
-                    raise ValueError("Shapes list not found in LabelMe file")
+                    raise ValueError("Shapes list in LabelMe file is missing or empty")
+                
         except Exception as e:
             print(f'Error while processing LabelMe file: {e}')
 
@@ -130,15 +131,10 @@ if __name__ == "__main__":
         print('Usage: <labelme_filepath> <reel_filename> <image_filename> <output_directory_path>')
     args = parser.parse_args()
 
-    # Check input file path and type
-    labelme_path = args.labelme_filepath
-
-    # Set path to output directory
-    out_dir = args.output_directory_path
     # Instantiate a LabelMeConverter object
     lm_converter = LabelMeConverter()
     # Extract, convert, and output to .tsv
-    lm_converter.convert_to_tsv(labelme_path, args.reel_filename, args.image_filename, out_dir)
+    lm_converter.convert_to_tsv(args.labelme_filepath, args.reel_filename, args.image_filename, args.output_directory_path)
 
 
     
