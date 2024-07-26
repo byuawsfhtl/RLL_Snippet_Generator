@@ -25,6 +25,7 @@ class LabelMeConverter_Tests(unittest.TestCase):
         # Negative test files
         self.random_file_path = os.path.join("tests", "resources", "iowa_image.tar")
         self.empty_labelme_path = os.path.join("tests", "resources", "empty.json")
+        self.no_shapes_labelme_path = os.path.join("tests", "resources", "no_shapes.json")
         # Test reel and image names
         self.reel_name = "test_reel_name_000.tar"
         self.image_name = "test_image_name_000.jpg"
@@ -37,15 +38,19 @@ class LabelMeConverter_Tests(unittest.TestCase):
         shapes = self.lm_converter.read_in_shapes(self.labelme_path)
         assert len(shapes) == self.labelme_shape_len
         assert shapes[0] == self.labelme_shape_0
-
+        
         # Test on a non-JSON file
-        expected_exception_message = "LabelMe file parameter extension is '.tar'; expected '.json'."
-        actual_exception = ""
-        try:
-            failing_shapes = self.lm_converter.read_in_shapes(self.random_file_path)
-        except Exception as e:
-            actual_exception = e
-        assert actual_exception == expected_exception_message
+        with self.assertRaisesRegex(ValueError, "LabelMe file parameter extension is '.tar'; expected '.json'"):
+            _ = self.lm_converter.read_in_shapes(self.random_file_path)
+        
+        # Test on a LabelMe file with an empty "shapes" list
+        with self.assertRaisesRegex(ValueError, "Shapes list in LabelMe file is missing or empty"):
+            _ = self.lm_converter.read_in_shapes(self.no_shapes_labelme_path)
+
+        # Test on an empty JSON file
+        with self.assertRaisesRegex(ValueError, r"^Opening or parsing the LabelMe file failed with this exception: .*"):
+            _ = self.lm_converter.read_in_shapes(self.empty_labelme_path)
+        
         
 
 

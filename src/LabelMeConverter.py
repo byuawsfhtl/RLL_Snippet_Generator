@@ -42,19 +42,18 @@ class LabelMeConverter:
         CORRECT_EXTENSION = ".json"
         _, file_extension = os.path.splitext(labelme_path)
         if file_extension != CORRECT_EXTENSION:
-            raise ValueError(f"LabelMe file parameter extension is '{file_extension}'; expected '{CORRECT_EXTENSION}'.")
+            raise ValueError(f"LabelMe file parameter extension is '{file_extension}'; expected '{CORRECT_EXTENSION}'")
 
         # Read in file and return the shapes list
         try:
             with open(labelme_path, 'r') as file:
-                labelme = json.load(file)
-                if (labelme['shapes']) and (len(labelme['shapes']) > 0):
-                    return labelme['shapes']
-                else:
-                    raise ValueError("Shapes list in LabelMe file is missing or empty")
-                
+                    labelme = json.load(file)
+                    if (labelme['shapes']) and (len(labelme['shapes']) > 0):
+                        return labelme['shapes']
+                    else:
+                        raise ValueError("Shapes list in LabelMe file is missing or empty")
         except Exception as e:
-            print(f'Error while processing LabelMe file: {e}')
+            raise ValueError(f"Opening or parsing the LabelMe file failed with this exception: {e}")
 
 
     def convert_to_dataframe(self, labelme_path, reel_filename, image_filename):
