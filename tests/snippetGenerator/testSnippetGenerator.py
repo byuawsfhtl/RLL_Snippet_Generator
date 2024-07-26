@@ -41,7 +41,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         ]
         self.image_tar_path = os.path.join("tests", "resources", "iowa_image.tar")
         self.image_tar_path_compressed = os.path.join(
-            "tests", "resources", "iowa_image.tar.gz"
+            "tests", "resources", "iowa_image_gz.tar.gz"
         )
         self.image_zip_path = os.path.join("tests", "resources", "iowa_image.zip")
         self.iowa_tsv_path = os.path.join("tests", "resources", "iowa.tsv")
@@ -218,7 +218,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
         for tar_image_name, image in self.snippet_generator.yield_image_and_name(
             self.image_tar_path
         ):
-            assert tar_image_name == "iowa.jpg"
+            assert tar_image_name == "iowa"
 
             if test_image.size == image.size and test_image.mode == image.mode:
                 # Compute the difference between the images, returns an image whose pixel values are abs(image_1.pixel_at_xy - image_2.pixel_at_xy)
@@ -229,7 +229,7 @@ class SnippetGenerator_Tests(unittest.TestCase):
             else:
                 assert False
 
-    def test_yield_snippet_and_name(self):
+    def test_yield_snippet_and_field(self):
         test_snippet = Image.open(
             os.path.join("tests", "resources", "iowa_image_iowa_Card_No.png")
         )
@@ -237,10 +237,12 @@ class SnippetGenerator_Tests(unittest.TestCase):
         for image_name, image in self.snippet_generator.yield_image_and_name(
             self.image_tar_path
         ):
-            for snip_name, snippet in self.snippet_generator.yield_snippet_and_name(
-                os.path.basename(self.image_tar_path), image_name, image
+            for field, snippet in self.snippet_generator.yield_snippet_and_field(
+                os.path.splitext(os.path.basename(self.image_tar_path))[0],
+                image_name,
+                image,
             ):
-                assert snip_name == "iowa_image_iowa_Card_No.png"
+                assert field == "Card_No"
 
                 if (
                     test_snippet.size == snippet.size
@@ -255,10 +257,10 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 else:
                     assert False
 
-        self.snippet_generator.map_coordinates_to_images["snippet.tar"] = {}
+        self.snippet_generator.map_coordinates_to_images["snippet"] = {}
         # (snip_name, box_coordinates) (left, upper, right, lower)
-        self.snippet_generator.map_coordinates_to_images["snippet.tar"][
-            "iowa_image_iowa_Card_No.png"
+        self.snippet_generator.map_coordinates_to_images["snippet"][
+            "iowa_image_iowa_Card_No"
         ] = [
             ("Test_snip_1", (0, 0, 0, 0)),
             ("Test_snip_2", (3, 3, 2, 5)),
@@ -271,14 +273,16 @@ class SnippetGenerator_Tests(unittest.TestCase):
         for image_name, image in self.snippet_generator.yield_image_and_name(
             self.snippet_tar_path
         ):
-            for snip_name, snippet in self.snippet_generator.yield_snippet_and_name(
-                os.path.basename(self.snippet_tar_path), image_name, image
+            for snip_name, snippet in self.snippet_generator.yield_snippet_and_field(
+                os.path.splitext(os.path.basename(self.snippet_tar_path))[0],
+                image_name,
+                image,
             ):
                 nothing_was_yielded = False
 
         assert nothing_was_yielded
 
-        self.snippet_generator.map_coordinates_to_images.pop("snippet.tar")
+        self.snippet_generator.map_coordinates_to_images.pop("snippet")
 
     def test_get_batches_of_snippets(self):
         images_per_batch = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 1]
