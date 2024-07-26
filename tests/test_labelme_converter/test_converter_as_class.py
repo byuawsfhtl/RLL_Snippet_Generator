@@ -33,7 +33,6 @@ class LabelMeConverter_Tests(unittest.TestCase):
 
 
     def test_read_in_shapes(self):
-        assert 1 == 2
         # Test on a normal file
         shapes = self.lm_converter.read_in_shapes(self.labelme_path)
         assert len(shapes) == self.labelme_shape_len

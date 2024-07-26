@@ -48,7 +48,7 @@ class LabelMeConverter:
         try:
             with open(labelme_path, 'r') as file:
                 labelme = json.load(file)
-                if (labelme['shapes']) and len(labelme['shapes'] > 0):
+                if (labelme['shapes']) and (len(labelme['shapes']) > 0):
                     return labelme['shapes']
                 else:
                     raise ValueError("Shapes list in LabelMe file is missing or empty")
