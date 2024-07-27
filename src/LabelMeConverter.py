@@ -42,7 +42,7 @@ class LabelMeConverter:
         CORRECT_EXTENSION = ".json"
         _, file_extension = os.path.splitext(labelme_path)
         if file_extension != CORRECT_EXTENSION:
-            raise ValueError(f"LabelMe file parameter extension is '{file_extension}'; expected '{CORRECT_EXTENSION}'")
+            raise TypeError(f"LabelMe file parameter extension is '{file_extension}'; expected '{CORRECT_EXTENSION}'")
 
         # Read in file and return the shapes list
         try:
@@ -70,6 +70,7 @@ class LabelMeConverter:
         # For each shape object in the LabelMe, extract the label name and the coordinate points and put them into a row list
         shapes = self.read_in_shapes(labelme_path)
         rows = []
+        shape_num = 0
         for shape in shapes:
             # row format: reel_filename, image_filename, snip_name, x1, y1, x2...y4
             row = [reel_filename, image_filename]
@@ -79,10 +80,11 @@ class LabelMeConverter:
                 row.append(point[1]) # y
             row_length = len(row)
             if row_length != EXPECTED_ROW_LENGTH:
-                print(f'ERROR: Unsuccessful extraction on current row. Number of columns is {row_length} instead of {EXPECTED_ROW_LENGTH}, so this row will be skipped. Extracted information:')
+                print(f'WARNING: Unsuccessful extraction on shape {shape_num}. Number of columns is {row_length} instead of {EXPECTED_ROW_LENGTH}, so this shape will be skipped. Extracted information:')
                 print(row)
                 continue
             rows.append(row)
+            shape_num += 1
         
         df = pd.DataFrame(rows, columns=['reel_filename', 'image_filename', 'snip_name', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4'])
         return df

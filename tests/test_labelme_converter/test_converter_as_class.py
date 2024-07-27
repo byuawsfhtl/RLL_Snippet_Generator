@@ -26,6 +26,8 @@ class LabelMeConverter_Tests(unittest.TestCase):
         self.random_file_path = os.path.join("tests", "resources", "iowa_image.tar")
         self.empty_labelme_path = os.path.join("tests", "resources", "empty.json")
         self.no_shapes_labelme_path = os.path.join("tests", "resources", "no_shapes.json")
+        # Negative path
+        self.bad_path = os.path.join("tests", "resources", "non_existant_file.json")
         # Test reel and image names
         self.reel_name = "test_reel_name_000.tar"
         self.image_name = "test_image_name_000.jpg"
@@ -34,13 +36,13 @@ class LabelMeConverter_Tests(unittest.TestCase):
 
 
     def test_read_in_shapes(self):
-        # Test on a normal file
+        # Test on a normal LabelMe file
         shapes = self.lm_converter.read_in_shapes(self.labelme_path)
         assert len(shapes) == self.labelme_shape_len
         assert shapes[0] == self.labelme_shape_0
         
         # Test on a non-JSON file
-        with self.assertRaisesRegex(ValueError, "LabelMe file parameter extension is '.tar'; expected '.json'"):
+        with self.assertRaisesRegex(TypeError, "LabelMe file parameter extension is '.tar'; expected '.json'"):
             _ = self.lm_converter.read_in_shapes(self.random_file_path)
         
         # Test on a LabelMe file with an empty "shapes" list
@@ -50,6 +52,15 @@ class LabelMeConverter_Tests(unittest.TestCase):
         # Test on an empty JSON file
         with self.assertRaisesRegex(ValueError, r"^Opening or parsing the LabelMe file failed with this exception: .*"):
             _ = self.lm_converter.read_in_shapes(self.empty_labelme_path)
+
+        # Test on a bad path
+        with self.assertRaisesRegex(FileNotFoundError, f"LabelMe file does not exist: {self.bad_path}"):
+            _ = self.lm_converter.read_in_shapes(self.bad_path)
+
+
+        
+    def test_convert_to_dataframe(self):
+        self.lm_converter.convert_to_dataframe(self.labelme_path, self.reel_name, self.image_name)
         
         
 
