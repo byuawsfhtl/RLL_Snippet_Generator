@@ -23,9 +23,16 @@ import sys
 import json
 import argparse
 import pandas as pd
+import logging
 
+# Create a logger and send output to stdout
+logger = logging.getLogger('output_logger')
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(handler)
 
 class LabelMeConverter:
+
     def read_in_shapes(self, labelme_path):
         '''
         This function reads in the LabelMe file and returns the "shapes" list.
@@ -36,7 +43,7 @@ class LabelMeConverter:
         # Check file exists
         if not os.path.isfile(labelme_path):
             raise FileNotFoundError(f"LabelMe file does not exist: {labelme_path}")
-        print('Reading in file...')
+        logger.info('Reading in file...')
         
         # Check file is a JSON file
         CORRECT_EXTENSION = ".json"
@@ -80,8 +87,7 @@ class LabelMeConverter:
                 row.append(point[1]) # y
             row_length = len(row)
             if row_length != EXPECTED_ROW_LENGTH:
-                print(f'WARNING: Unsuccessful extraction on shape {shape_num}. Number of columns is {row_length} instead of {EXPECTED_ROW_LENGTH}, so this shape will be skipped. Extracted information:')
-                print(row)
+                logger.warning(f'Unsuccessful extraction on shape {shape_num}. Number of columns is {row_length} instead of {EXPECTED_ROW_LENGTH}, so this shape will be skipped. Extracted information:\n{row}')
                 continue
             rows.append(row)
             shape_num += 1
@@ -103,7 +109,7 @@ class LabelMeConverter:
         # Check output directory
         if not os.path.isdir(out_dir):
             raise FileNotFoundError(f"Output directory does not exist: {out_dir}")
-        print(f'Output set to {out_dir}')
+        logger.info(f'Output set to {out_dir}')
 
         # Convert the LabelMe to a pandas DataFrame
         df = self.convert_to_dataframe(labelme_path, reel_filename, image_filename)
@@ -114,9 +120,9 @@ class LabelMeConverter:
         # Output to tsv
         try:
             df.to_csv(output_path, sep='\t', index=False)
-            print(f'LabelMe converted to a .tsv in snippet generator format at {output_path}')
+            logger.info(f'LabelMe converted to a .tsv in snippet generator format at {output_path}')
         except Exception as e:
-            print(f'ERROR: writing to a .tsv file at {output_file_name} failed with this exception: {e}')
+            logger.critical(f'Writing to a .tsv file at {output_file_name} failed with this exception: {e}')
 
 
 
