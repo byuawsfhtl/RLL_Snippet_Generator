@@ -26,6 +26,8 @@ class LabelMeConverter_Tests(unittest.TestCase):
         self.df_columns = pd.Index(['reel_filename', 'image_filename', 'snip_name', 'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4'], dtype='object')
         self.df_row_0 = {'reel_filename': 'test_reel_name_000.tar', 'image_filename': 'test_image_name_000.jpg', 'snip_name': 'Card No.', 'x1': 71.45833333333337, 'y1': 205.29166666666669, 'x2': 70.41666666666669, 'y2': 141.75, 'x3': 304.7916666666667, 'y3': 143.83333333333334, 'x4': 308.95833333333337, 'y4': 210.5}
         self.df_len_rows = 110
+        # Test correct output file to compare to
+
         # Negative test files
         self.random_file_path = os.path.join("tests", "resources", "iowa_image.tar")
         self.empty_labelme_path = os.path.join("tests", "resources", "empty.json")
@@ -73,7 +75,9 @@ class LabelMeConverter_Tests(unittest.TestCase):
             self.assertEqual(len(df), self.df_len_rows)
             # Assert the first row was created correctly
             self.assertEqual(df.iloc[0].to_dict(), self.df_row_0)
-            
+
+    def test_convert_to_tsv(self):
+        pass
             
         
         
