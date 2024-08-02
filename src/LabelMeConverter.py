@@ -125,7 +125,6 @@ class LabelMeConverter:
             logger.critical(f'Writing to a .tsv file at {output_file_name} failed with this exception: {e}')
 
 
-
 if __name__ == "__main__":
     # Command line parameters
     parser = argparse.ArgumentParser(description="Convert a LabelMe file to a .tsv file in snippet generator format")
