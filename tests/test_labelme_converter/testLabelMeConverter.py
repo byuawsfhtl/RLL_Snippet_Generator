@@ -1,8 +1,6 @@
 import unittest
 import os
 import sys
-import json
-import argparse
 import pandas as pd
 
 current = os.path.dirname(os.path.realpath(__file__))
@@ -11,7 +9,6 @@ root = os.path.dirname(testFolder)
 sys.path.append(os.path.join(root, "src"))
 
 #from LabelMeConverter import LabelMeConverter
-
 from src.LabelMeConverter import LabelMeConverter
 
 class LabelMeConverter_Tests(unittest.TestCase):
@@ -20,8 +17,9 @@ class LabelMeConverter_Tests(unittest.TestCase):
     '''
 
     def setUp(self):
-        # Test LabelMe file and some verification info
+        # Test LabelMe file path
         self.labelme_path = os.path.join("tests", "resources", "iowa_labelme.json")
+        # Verification info for test LabelMe file (iowa_labelme.json)
         self.labelme_shape_len = 111
         self.labelme_shape_0 = {'label': 'Card No.', 'points': [[71.45833333333337, 205.29166666666669], [70.41666666666669, 141.75], [304.7916666666667, 143.83333333333334], [308.95833333333337, 210.5]], 'group_id': None, 'shape_type': 'polygon', 'flags': {}}
         self.malformed_shape_warning = "WARNING:output_logger:Unsuccessful extraction on shape 3. Number of columns is 15 instead of 11, so this shape will be skipped. Extracted information:\n['test_reel_name_000.tar', 'test_image_name_000.jpg', 'Name Field', 1062.0833333333335, 227.16666666666669, 1062.0833333333335, 227.16666666666669, 394.375, 227.16666666666669, 394.375, 144.875, 1064.1666666666667, 140.70833333333334, 1065.2083333333335, 231.33333333333334]"
@@ -32,8 +30,8 @@ class LabelMeConverter_Tests(unittest.TestCase):
         self.output_directory = os.path.join("tests", "resources")
         self.output_file_path = os.path.join("tests", "resources", "iowa_labelme.tsv")
         # Output file verification info
-        self.output_expected_size = 20169
         # Note - the correct output for iowa_labelme.json is available at resources/correct_LabelMeConverter_output.tsv
+        self.output_expected_size = 20169
         # Negative test files
         self.random_file_path = os.path.join("tests", "resources", "iowa_image.tar")
         self.empty_labelme_path = os.path.join("tests", "resources", "empty.json")
@@ -89,22 +87,10 @@ class LabelMeConverter_Tests(unittest.TestCase):
         # Check if file exists
         self.assertTrue(os.path.exists(self.output_file_path), "Output file was not created (or saved at an unexpected path)")
         # Check that file is about the right size
-        self.assertAlmostEqual(os.path.getsize(self.output_file_path), self.output_expected_size, msg="Output file size differs from the expected", delta=20)
+        self.assertAlmostEqual(os.path.getsize(self.output_file_path), self.output_expected_size, msg="Output file size differs from the expected size by more than 20 bytes", delta=20)
     
     def tearDown(self):
         # Remove the test output file (if it was created)
         if os.path.exists(self.output_file_path):
             os.remove(self.output_file_path)
-
-            
-        
-        
-
-
-
-
-#converter = LabelMeConverter()
-#df = converter.convert_to_dataframe(LABELME, REEL_NAME, IMAGE_NAME)
-#print(df)
-
 
