@@ -81,7 +81,16 @@ class CocoHandler_Tests(unittest.TestCase):
         self.assertEqual(self.coco.coco_dict["annotations"][0], ann_validation_1, "Annotation data does not match expected values")
 
         # Test second annotation entry
-        
+        self.assertEqual(self.coco.create_annotation_entry(2, 2, [0, 0, 0, 0]), 2, "Annotation entry did not return expected id")
+        # Test annotation data
+        ann_validation_1 = {
+            "id" : 2,
+            "category_id" : 2,
+            "image_id" : 2,
+            "bbox" : [0, 0, 0, 0]
+        }
+        self.assertEqual(self.coco.coco_dict["annotations"][1], ann_validation_1, "Annotation data does not match expected values")
+
 
 
 
