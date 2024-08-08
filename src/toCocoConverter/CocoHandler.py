@@ -55,6 +55,7 @@ class CocoHandler:
             "bbox" : bbox
         })
         self.next_annotation_id += 1
+        return self.next_annotation_id - 1  # return original number
     
     def get_or_create_category_entry(self, name: str) -> int:
         # If the category is not in the coco dict, add it and assign an id
