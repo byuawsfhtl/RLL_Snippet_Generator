@@ -1,223 +1,112 @@
-reel_filename	image_filename	snip_name	x1	y1	x2	y2	x3	y3	x4	y4
-iowa_image_gz	iowa	Card_No	70	141	305	143	71	206	309	211
-iowa_image_gz	iowa	Card_No_Field	128	140	306	145	130	203	308	212
-iowa_image_gz	iowa	Name	323	141	1063	141	325	231	1066	226
-iowa_image_gz	iowa	Name_Field	394	144	1065	140	394	228	1063	228
-iowa_image_gz	iowa	Age	1067	142	1227	142	1066	231	1229	229
-iowa_image_gz	iowa	Age_Field	1114	142	1225	140	1115	227	1229	228
-iowa_image_gz	iowa	County	323	228	743	227	324	284	742	282
-iowa_image_gz	iowa	County_Field	402	227	740	228	404	282	739	285
-iowa_image_gz	iowa	PO	742	226	1230	227	744	281	1230	284
-iowa_image_gz	iowa	PO_Field	794	226	1229	231	795	280	1229	284
-iowa_image_gz	iowa	Sex	69	206	310	208	71	259	314	261
-iowa_image_gz	iowa	Sex_Male	132	209	231	208	132	238	229	239
-iowa_image_gz	iowa	Sex_Female	130	236	229	237	133	260	230	260
-iowa_image_gz	iowa	Color	75	261	317	259	76	309	320	309
-iowa_image_gz	iowa	Color_Field	132	260	314	258	136	307	316	309
-iowa_image_gz	iowa	Married	71	310	194	313	72	360	197	360
-iowa_image_gz	iowa	Married_Field	157	313	198	314	157	357	197	361
-iowa_image_gz	iowa	Widowed	196	313	315	311	197	358	316	359
-iowa_image_gz	iowa	Widowed_Field	283	312	315	311	285	355	318	358
-iowa_image_gz	iowa	Single	74	362	191	361	74	404	192	407
-iowa_image_gz	iowa	Single_Field	138	362	190	362	138	406	190	405
-iowa_image_gz	iowa	Divorced	189	363	317	363	191	406	316	408
-iowa_image_gz	iowa	Divorced_Field	278	363	317	362	278	403	316	404
-iowa_image_gz	iowa	Read	74	530	316	531	76	578	316	580
-iowa_image_gz	iowa	Read_Field	137	532	314	528	139	576	318	577
-iowa_image_gz	iowa	Write	75	580	315	577	75	621	317	621
-iowa_image_gz	iowa	Write_Field	142	579	313	577	143	617	315	620
-iowa_image_gz	iowa	Blind	76	624	207	623	75	668	207	668
-iowa_image_gz	iowa	Blind_Field	138	629	202	626	137	665	205	666
-iowa_image_gz	iowa	Deaf	208	623	322	621	207	666	321	666
-iowa_image_gz	iowa	Deaf_Field	256	621	322	623	257	665	320	666
-iowa_image_gz	iowa	Insane	77	667	213	670	79	707	214	709
-iowa_image_gz	iowa	Insane_Field	153	671	215	670	153	705	214	709
-iowa_image_gz	iowa	Idiot	211	668	323	667	213	708	322	707
-iowa_image_gz	iowa	Idiot_Field	263	667	322	665	263	707	321	708
-iowa_image_gz	iowa	Town_or_Township	322	283	932	279	324	336	934	339
-iowa_image_gz	iowa	Town	324	303	389	304	326	337	391	336
-iowa_image_gz	iowa	Township	414	305	529	307	416	337	529	336
-iowa_image_gz	iowa	Town_or_Township_Field	519	282	934	279	520	335	934	338
-iowa_image_gz	iowa	Ward	936	283	1232	281	937	336	1233	340
-iowa_image_gz	iowa	Ward_Field	991	281	1230	281	992	335	1229	339
-iowa_image_gz	iowa	Occupation	323	336	934	338	326	381	937	383
-iowa_image_gz	iowa	Occupation_Field	441	336	939	333	444	378	935	383
-iowa_image_gz	iowa	Months_in_1914_Unemployed	936	336	1230	338	938	382	1233	387
-iowa_image_gz	iowa	Months_in_1914_Unemployed_Field	1090	339	1234	338	1090	382	1235	385
-iowa_image_gz	iowa	Total_earnings_for_1914_from_occupation_	326	385	1231	390	326	435	1230	440
-iowa_image_gz	iowa	Total_earnings_for_1914_from_occupation__Field	748	388	1232	389	749	436	1232	441
-iowa_image_gz	iowa	Extent_of_Education	324	436	1232	441	325	493	1232	503
-iowa_image_gz	iowa	Extent_of_Education_Common	455	436	722	436	458	464	721	464
-iowa_image_gz	iowa	Extent_of_Education_Common_Field	553	437	723	435	552	461	723	462
-iowa_image_gz	iowa	Extent_of_Education_Grammar	453	464	733	461	453	494	737	496
-iowa_image_gz	iowa	Extent_of_Education_Grammar_Field	557	462	732	463	558	494	735	500
-iowa_image_gz	iowa	Extent_of_Education_High_School	733	441	979	442	733	496	980	503
-iowa_image_gz	iowa	Extent_of_Education_High_School_Field	805	441	978	443	804	496	984	503
-iowa_image_gz	iowa	Extent_of_Education_College	979	440	1229	440	981	502	1232	503
-iowa_image_gz	iowa	Extent_of_Education_College_Field	1052	438	1235	436	1052	498	1237	503
-iowa_image_gz	iowa	Birth_Place	324	491	977	502	326	550	978	548
-iowa_image_gz	iowa	Birth_Place_Field	391	494	981	500	390	546	982	548
-iowa_image_gz	iowa	Do_you_own_your_home_or_farm	979	501	1233	503	977	550	1235	557
-iowa_image_gz	iowa	Do_you_own_your_home_or_farm_Yes	1161	505	1233	507	1163	529	1233	532
-iowa_image_gz	iowa	Do_you_own_your_home_or_farm_No	1165	529	1233	530	1163	557	1238	558
-iowa_image_gz	iowa	Incumbrance_on_farm_or_home_	325	549	819	549	327	593	823	596
-iowa_image_gz	iowa	Incumbrance_on_farm_or_home__Field	661	548	821	548	661	592	823	596
-iowa_image_gz	iowa	Value_of_farm_or_home_	823	548	1235	554	823	594	1235	598
-iowa_image_gz	iowa	Value_of_farm_or_home__Field	1075	555	1234	553	1077	595	1235	597
-iowa_image_gz	iowa	Military_Service	330	593	1233	598	331	679	1238	679
-iowa_image_gz	iowa	Military_Service_Civil_War	504	595	660	598	504	632	662	633
-iowa_image_gz	iowa	Military_Service_Civil_War_Field	601	600	659	599	601	629	665	632
-iowa_image_gz	iowa	Military_Service_Mexican	663	598	806	596	662	632	806	633
-iowa_image_gz	iowa	Military_Service_Mexican_Field	747	598	807	596	749	631	807	633
-iowa_image_gz	iowa	Military_Service_Spanish	806	598	947	600	806	632	948	635
-iowa_image_gz	iowa	Military_Service_Spanish_Field	887	600	949	598	889	630	948	631
-iowa_image_gz	iowa	Military_Service_Infantry	948	595	1091	599	951	631	1092	634
-iowa_image_gz	iowa	Military_Service_Infantry_Field	1035	600	1093	600	1035	631	1095	632
-iowa_image_gz	iowa	Military_Service_Cavalry	1093	598	1233	595	1094	632	1237	633
-iowa_image_gz	iowa	Military_Service_Cavalry_Field	1173	600	1232	598	1174	632	1235	631
-iowa_image_gz	iowa	Military_Service_Artillery	335	635	476	637	336	676	477	677
-iowa_image_gz	iowa	Military_Service_Artillery_Field	423	636	479	636	423	673	479	675
-iowa_image_gz	iowa	Military_Service_Navy	476	634	575	634	476	676	576	678
-iowa_image_gz	iowa	Military_Service_Navy_Field	535	638	575	635	535	673	576	677
-iowa_image_gz	iowa	Military_Service_State	578	635	794	636	577	677	794	678
-iowa_image_gz	iowa	Military_Service_State_Field	635	635	794	635	635	677	797	676
-iowa_image_gz	iowa	Military_Service_Regiment	792	635	1054	636	794	677	1056	679
-iowa_image_gz	iowa	Military_Service_Regiment_Field	892	635	1056	636	892	677	1056	679
-iowa_image_gz	iowa	Military_Service_Company	1057	635	1239	634	1060	677	1238	680
-iowa_image_gz	iowa	Military_Service_Company_Field	1150	635	1234	634	1152	678	1234	680
-iowa_image_gz	iowa	Church_Affiliation	328	679	1239	678	329	720	1239	719
-iowa_image_gz	iowa	Church_Affiliation_Field	522	678	1238	677	522	719	1239	718
-iowa_image_gz	iowa	Fathers_Birthplace	331	719	777	716	333	764	780	763
-iowa_image_gz	iowa	Fathers_Birthplace_Field	445	719	778	717	448	762	779	762
-iowa_image_gz	iowa	Mothers_Birthplace	778	715	1237	716	778	762	1238	764
-iowa_image_gz	iowa	Mothers_Birthplace_Field	890	712	1240	713	891	761	1234	764
-iowa_image_gz	iowa	Remarks	330	766	1234	760	332	808	1234	805
-iowa_image_gz	iowa	Remarks_Field	429	765	1235	762	432	804	1238	804
-iowa_image_gz	iowa	Signed	450	807	1146	807	452	855	1145	852
-iowa_image_gz	iowa	Signed_Field	525	804	1148	806	527	855	1150	854
-iowa_image_gz	iowa	Months_in_School_1914	73	410	319	408	74	529	321	526
-iowa_image_gz	iowa	Months_in_School_1914_Public	76	445	203	445	77	483	207	483
-iowa_image_gz	iowa	Months_in_School_1914_Public_Field	146	445	208	445	146	481	209	483
-iowa_image_gz	iowa	Months_in_School_1914_High	204	444	316	444	205	483	318	483
-iowa_image_gz	iowa	Months_in_School_1914_High_Field	255	444	318	444	257	481	322	484
-iowa_image_gz	iowa	Months_in_School_1914_Private	74	484	207	485	79	522	207	525
-iowa_image_gz	iowa	Months_in_School_1914_Private_Field	156	487	207	483	155	521	206	523
-iowa_image_gz	iowa	Months_in_School_1914_College	205	485	318	483	208	523	318	526
-iowa_image_gz	iowa	Months_in_School_1914_College_Field	278	487	317	487	278	522	317	525
-iowa_image_gz	iowa	If_Foreign_Born_are_you_Naturalized	74	711	323	711	75	779	326	775
-iowa_image_gz	iowa	If_Foreign_Born_are_you_Naturalized_Field	200	742	322	739	203	771	320	775
-iowa_image_gz	iowa	Years_in_US	80	775	321	773	79	817	325	814
-iowa_image_gz	iowa	Years_in_US_Field	228	776	321	774	228	812	323	813
-iowa_image_gz	iowa	Years_in_Iowa	79	814	324	810	79	854	323	853
-iowa_image_gz	iowa	Years_in_Iowa_Field	228	811	327	809	227	851	324	853
-iowa_image	iowa	Card_No	70	141	305	143	71	206	309	211
-iowa_image	iowa	Card_No_Field	128	140	306	145	130	203	308	212
-iowa_image	iowa	Name	323	141	1063	141	325	231	1066	226
-iowa_image	iowa	Name_Field	394	144	1065	140	394	228	1063	228
-iowa_image	iowa	Age	1067	142	1227	142	1066	231	1229	229
-iowa_image	iowa	Age_Field	1114	142	1225	140	1115	227	1229	228
-iowa_image	iowa	County	323	228	743	227	324	284	742	282
-iowa_image	iowa	County_Field	402	227	740	228	404	282	739	285
-iowa_image	iowa	PO	742	226	1230	227	744	281	1230	284
-iowa_image	iowa	PO_Field	794	226	1229	231	795	280	1229	284
-iowa_image	iowa	Sex	69	206	310	208	71	259	314	261
-iowa_image	iowa	Sex_Male	132	209	231	208	132	238	229	239
-iowa_image	iowa	Sex_Female	130	236	229	237	133	260	230	260
-iowa_image	iowa	Color	75	261	317	259	76	309	320	309
-iowa_image	iowa	Color_Field	132	260	314	258	136	307	316	309
-iowa_image	iowa	Married	71	310	194	313	72	360	197	360
-iowa_image	iowa	Married_Field	157	313	198	314	157	357	197	361
-iowa_image	iowa	Widowed	196	313	315	311	197	358	316	359
-iowa_image	iowa	Widowed_Field	283	312	315	311	285	355	318	358
-iowa_image	iowa	Single	74	362	191	361	74	404	192	407
-iowa_image	iowa	Single_Field	138	362	190	362	138	406	190	405
-iowa_image	iowa	Divorced	189	363	317	363	191	406	316	408
-iowa_image	iowa	Divorced_Field	278	363	317	362	278	403	316	404
-iowa_image	iowa	Read	74	530	316	531	76	578	316	580
-iowa_image	iowa	Read_Field	137	532	314	528	139	576	318	577
-iowa_image	iowa	Write	75	580	315	577	75	621	317	621
-iowa_image	iowa	Write_Field	142	579	313	577	143	617	315	620
-iowa_image	iowa	Blind	76	624	207	623	75	668	207	668
-iowa_image	iowa	Blind_Field	138	629	202	626	137	665	205	666
-iowa_image	iowa	Deaf	208	623	322	621	207	666	321	666
-iowa_image	iowa	Deaf_Field	256	621	322	623	257	665	320	666
-iowa_image	iowa	Insane	77	667	213	670	79	707	214	709
-iowa_image	iowa	Insane_Field	153	671	215	670	153	705	214	709
-iowa_image	iowa	Idiot	211	668	323	667	213	708	322	707
-iowa_image	iowa	Idiot_Field	263	667	322	665	263	707	321	708
-iowa_image	iowa	Town_or_Township	322	283	932	279	324	336	934	339
-iowa_image	iowa	Town	324	303	389	304	326	337	391	336
-iowa_image	iowa	Township	414	305	529	307	416	337	529	336
-iowa_image	iowa	Town_or_Township_Field	519	282	934	279	520	335	934	338
-iowa_image	iowa	Ward	936	283	1232	281	937	336	1233	340
-iowa_image	iowa	Ward_Field	991	281	1230	281	992	335	1229	339
-iowa_image	iowa	Occupation	323	336	934	338	326	381	937	383
-iowa_image	iowa	Occupation_Field	441	336	939	333	444	378	935	383
-iowa_image	iowa	Months_in_1914_Unemployed	936	336	1230	338	938	382	1233	387
-iowa_image	iowa	Months_in_1914_Unemployed_Field	1090	339	1234	338	1090	382	1235	385
-iowa_image	iowa	Total_earnings_for_1914_from_occupation_	326	385	1231	390	326	435	1230	440
-iowa_image	iowa	Total_earnings_for_1914_from_occupation__Field	748	388	1232	389	749	436	1232	441
-iowa_image	iowa	Extent_of_Education	324	436	1232	441	325	493	1232	503
-iowa_image	iowa	Extent_of_Education_Common	455	436	722	436	458	464	721	464
-iowa_image	iowa	Extent_of_Education_Common_Field	553	437	723	435	552	461	723	462
-iowa_image	iowa	Extent_of_Education_Grammar	453	464	733	461	453	494	737	496
-iowa_image	iowa	Extent_of_Education_Grammar_Field	557	462	732	463	558	494	735	500
-iowa_image	iowa	Extent_of_Education_High_School	733	441	979	442	733	496	980	503
-iowa_image	iowa	Extent_of_Education_High_School_Field	805	441	978	443	804	496	984	503
-iowa_image	iowa	Extent_of_Education_College	979	440	1229	440	981	502	1232	503
-iowa_image	iowa	Extent_of_Education_College_Field	1052	438	1235	436	1052	498	1237	503
-iowa_image	iowa	Birth_Place	324	491	977	502	326	550	978	548
-iowa_image	iowa	Birth_Place_Field	391	494	981	500	390	546	982	548
-iowa_image	iowa	Do_you_own_your_home_or_farm	979	501	1233	503	977	550	1235	557
-iowa_image	iowa	Do_you_own_your_home_or_farm_Yes	1161	505	1233	507	1163	529	1233	532
-iowa_image	iowa	Do_you_own_your_home_or_farm_No	1165	529	1233	530	1163	557	1238	558
-iowa_image	iowa	Incumbrance_on_farm_or_home_	325	549	819	549	327	593	823	596
-iowa_image	iowa	Incumbrance_on_farm_or_home__Field	661	548	821	548	661	592	823	596
-iowa_image	iowa	Value_of_farm_or_home_	823	548	1235	554	823	594	1235	598
-iowa_image	iowa	Value_of_farm_or_home__Field	1075	555	1234	553	1077	595	1235	597
-iowa_image	iowa	Military_Service	330	593	1233	598	331	679	1238	679
-iowa_image	iowa	Military_Service_Civil_War	504	595	660	598	504	632	662	633
-iowa_image	iowa	Military_Service_Civil_War_Field	601	600	659	599	601	629	665	632
-iowa_image	iowa	Military_Service_Mexican	663	598	806	596	662	632	806	633
-iowa_image	iowa	Military_Service_Mexican_Field	747	598	807	596	749	631	807	633
-iowa_image	iowa	Military_Service_Spanish	806	598	947	600	806	632	948	635
-iowa_image	iowa	Military_Service_Spanish_Field	887	600	949	598	889	630	948	631
-iowa_image	iowa	Military_Service_Infantry	948	595	1091	599	951	631	1092	634
-iowa_image	iowa	Military_Service_Infantry_Field	1035	600	1093	600	1035	631	1095	632
-iowa_image	iowa	Military_Service_Cavalry	1093	598	1233	595	1094	632	1237	633
-iowa_image	iowa	Military_Service_Cavalry_Field	1173	600	1232	598	1174	632	1235	631
-iowa_image	iowa	Military_Service_Artillery	335	635	476	637	336	676	477	677
-iowa_image	iowa	Military_Service_Artillery_Field	423	636	479	636	423	673	479	675
-iowa_image	iowa	Military_Service_Navy	476	634	575	634	476	676	576	678
-iowa_image	iowa	Military_Service_Navy_Field	535	638	575	635	535	673	576	677
-iowa_image	iowa	Military_Service_State	578	635	794	636	577	677	794	678
-iowa_image	iowa	Military_Service_State_Field	635	635	794	635	635	677	797	676
-iowa_image	iowa	Military_Service_Regiment	792	635	1054	636	794	677	1056	679
-iowa_image	iowa	Military_Service_Regiment_Field	892	635	1056	636	892	677	1056	679
-iowa_image	iowa	Military_Service_Company	1057	635	1239	634	1060	677	1238	680
-iowa_image	iowa	Military_Service_Company_Field	1150	635	1234	634	1152	678	1234	680
-iowa_image	iowa	Church_Affiliation	328	679	1239	678	329	720	1239	719
-iowa_image	iowa	Church_Affiliation_Field	522	678	1238	677	522	719	1239	718
-iowa_image	iowa	Fathers_Birthplace	331	719	777	716	333	764	780	763
-iowa_image	iowa	Fathers_Birthplace_Field	445	719	778	717	448	762	779	762
-iowa_image	iowa	Mothers_Birthplace	778	715	1237	716	778	762	1238	764
-iowa_image	iowa	Mothers_Birthplace_Field	890	712	1240	713	891	761	1234	764
-iowa_image	iowa	Remarks	330	766	1234	760	332	808	1234	805
-iowa_image	iowa	Remarks_Field	429	765	1235	762	432	804	1238	804
-iowa_image	iowa	Signed	450	807	1146	807	452	855	1145	852
-iowa_image	iowa	Signed_Field	525	804	1148	806	527	855	1150	854
-iowa_image	iowa	Months_in_School_1914	73	410	319	408	74	529	321	526
-iowa_image	iowa	Months_in_School_1914_Public	76	445	203	445	77	483	207	483
-iowa_image	iowa	Months_in_School_1914_Public_Field	146	445	208	445	146	481	209	483
-iowa_image	iowa	Months_in_School_1914_High	204	444	316	444	205	483	318	483
-iowa_image	iowa	Months_in_School_1914_High_Field	255	444	318	444	257	481	322	484
-iowa_image	iowa	Months_in_School_1914_Private	74	484	207	485	79	522	207	525
-iowa_image	iowa	Months_in_School_1914_Private_Field	156	487	207	483	155	521	206	523
-iowa_image	iowa	Months_in_School_1914_College	205	485	318	483	208	523	318	526
-iowa_image	iowa	Months_in_School_1914_College_Field	278	487	317	487	278	522	317	525
-iowa_image	iowa	If_Foreign_Born_are_you_Naturalized	74	711	323	711	75	779	326	775
-iowa_image	iowa	If_Foreign_Born_are_you_Naturalized_Field	200	742	322	739	203	771	320	775
-iowa_image	iowa	Years_in_US	80	775	321	773	79	817	325	814
-iowa_image	iowa	Years_in_US_Field	228	776	321	774	228	812	323	813
-iowa_image	iowa	Years_in_Iowa	79	814	324	810	79	854	323	853
-iowa_image	iowa	Years_in_Iowa_Field	228	811	327	809	227	851	324	853
+image_name	snip_name	x1	y1	x2	y2	x3	y3	x4	y4
+iowa	Card_No	70	141	305	143	71	206	309	211
+iowa	Card_No_Field	128	140	306	145	130	203	308	212
+iowa	Name	323	141	1063	141	325	231	1066	226
+iowa	Name_Field	394	144	1065	140	394	228	1063	228
+iowa	Age	1067	142	1227	142	1066	231	1229	229
+iowa	Age_Field	1114	142	1225	140	1115	227	1229	228
+iowa	County	323	228	743	227	324	284	742	282
+iowa	County_Field	402	227	740	228	404	282	739	285
+iowa	PO	742	226	1230	227	744	281	1230	284
+iowa	PO_Field	794	226	1229	231	795	280	1229	284
+iowa	Sex	69	206	310	208	71	259	314	261
+iowa	Sex_Male	132	209	231	208	132	238	229	239
+iowa	Sex_Female	130	236	229	237	133	260	230	260
+iowa	Color	75	261	317	259	76	309	320	309
+iowa	Color_Field	132	260	314	258	136	307	316	309
+iowa	Married	71	310	194	313	72	360	197	360
+iowa	Married_Field	157	313	198	314	157	357	197	361
+iowa	Widowed	196	313	315	311	197	358	316	359
+iowa	Widowed_Field	283	312	315	311	285	355	318	358
+iowa	Single	74	362	191	361	74	404	192	407
+iowa	Single_Field	138	362	190	362	138	406	190	405
+iowa	Divorced	189	363	317	363	191	406	316	408
+iowa	Divorced_Field	278	363	317	362	278	403	316	404
+iowa	Read	74	530	316	531	76	578	316	580
+iowa	Read_Field	137	532	314	528	139	576	318	577
+iowa	Write	75	580	315	577	75	621	317	621
+iowa	Write_Field	142	579	313	577	143	617	315	620
+iowa	Blind	76	624	207	623	75	668	207	668
+iowa	Blind_Field	138	629	202	626	137	665	205	666
+iowa	Deaf	208	623	322	621	207	666	321	666
+iowa	Deaf_Field	256	621	322	623	257	665	320	666
+iowa	Insane	77	667	213	670	79	707	214	709
+iowa	Insane_Field	153	671	215	670	153	705	214	709
+iowa	Idiot	211	668	323	667	213	708	322	707
+iowa	Idiot_Field	263	667	322	665	263	707	321	708
+iowa	Town_or_Township	322	283	932	279	324	336	934	339
+iowa	Town	324	303	389	304	326	337	391	336
+iowa	Township	414	305	529	307	416	337	529	336
+iowa	Town_or_Township_Field	519	282	934	279	520	335	934	338
+iowa	Ward	936	283	1232	281	937	336	1233	340
+iowa	Ward_Field	991	281	1230	281	992	335	1229	339
+iowa	Occupation	323	336	934	338	326	381	937	383
+iowa	Occupation_Field	441	336	939	333	444	378	935	383
+iowa	Months_in_1914_Unemployed	936	336	1230	338	938	382	1233	387
+iowa	Months_in_1914_Unemployed_Field	1090	339	1234	338	1090	382	1235	385
+iowa	Total_earnings_for_1914_from_occupation_	326	385	1231	390	326	435	1230	440
+iowa	Total_earnings_for_1914_from_occupation__Field	748	388	1232	389	749	436	1232	441
+iowa	Extent_of_Education	324	436	1232	441	325	493	1232	503
+iowa	Extent_of_Education_Common	455	436	722	436	458	464	721	464
+iowa	Extent_of_Education_Common_Field	553	437	723	435	552	461	723	462
+iowa	Extent_of_Education_Grammar	453	464	733	461	453	494	737	496
+iowa	Extent_of_Education_Grammar_Field	557	462	732	463	558	494	735	500
+iowa	Extent_of_Education_High_School	733	441	979	442	733	496	980	503
+iowa	Extent_of_Education_High_School_Field	805	441	978	443	804	496	984	503
+iowa	Extent_of_Education_College	979	440	1229	440	981	502	1232	503
+iowa	Extent_of_Education_College_Field	1052	438	1235	436	1052	498	1237	503
+iowa	Birth_Place	324	491	977	502	326	550	978	548
+iowa	Birth_Place_Field	391	494	981	500	390	546	982	548
+iowa	Do_you_own_your_home_or_farm	979	501	1233	503	977	550	1235	557
+iowa	Do_you_own_your_home_or_farm_Yes	1161	505	1233	507	1163	529	1233	532
+iowa	Do_you_own_your_home_or_farm_No	1165	529	1233	530	1163	557	1238	558
+iowa	Incumbrance_on_farm_or_home_	325	549	819	549	327	593	823	596
+iowa	Incumbrance_on_farm_or_home__Field	661	548	821	548	661	592	823	596
+iowa	Value_of_farm_or_home_	823	548	1235	554	823	594	1235	598
+iowa	Value_of_farm_or_home__Field	1075	555	1234	553	1077	595	1235	597
+iowa	Military_Service	330	593	1233	598	331	679	1238	679
+iowa	Military_Service_Civil_War	504	595	660	598	504	632	662	633
+iowa	Military_Service_Civil_War_Field	601	600	659	599	601	629	665	632
+iowa	Military_Service_Mexican	663	598	806	596	662	632	806	633
+iowa	Military_Service_Mexican_Field	747	598	807	596	749	631	807	633
+iowa	Military_Service_Spanish	806	598	947	600	806	632	948	635
+iowa	Military_Service_Spanish_Field	887	600	949	598	889	630	948	631
+iowa	Military_Service_Infantry	948	595	1091	599	951	631	1092	634
+iowa	Military_Service_Infantry_Field	1035	600	1093	600	1035	631	1095	632
+iowa	Military_Service_Cavalry	1093	598	1233	595	1094	632	1237	633
+iowa	Military_Service_Cavalry_Field	1173	600	1232	598	1174	632	1235	631
+iowa	Military_Service_Artillery	335	635	476	637	336	676	477	677
+iowa	Military_Service_Artillery_Field	423	636	479	636	423	673	479	675
+iowa	Military_Service_Navy	476	634	575	634	476	676	576	678
+iowa	Military_Service_Navy_Field	535	638	575	635	535	673	576	677
+iowa	Military_Service_State	578	635	794	636	577	677	794	678
+iowa	Military_Service_State_Field	635	635	794	635	635	677	797	676
+iowa	Military_Service_Regiment	792	635	1054	636	794	677	1056	679
+iowa	Military_Service_Regiment_Field	892	635	1056	636	892	677	1056	679
+iowa	Military_Service_Company	1057	635	1239	634	1060	677	1238	680
+iowa	Military_Service_Company_Field	1150	635	1234	634	1152	678	1234	680
+iowa	Church_Affiliation	328	679	1239	678	329	720	1239	719
+iowa	Church_Affiliation_Field	522	678	1238	677	522	719	1239	718
+iowa	Fathers_Birthplace	331	719	777	716	333	764	780	763
+iowa	Fathers_Birthplace_Field	445	719	778	717	448	762	779	762
+iowa	Mothers_Birthplace	778	715	1237	716	778	762	1238	764
+iowa	Mothers_Birthplace_Field	890	712	1240	713	891	761	1234	764
+iowa	Remarks	330	766	1234	760	332	808	1234	805
+iowa	Remarks_Field	429	765	1235	762	432	804	1238	804
+iowa	Signed	450	807	1146	807	452	855	1145	852
+iowa	Signed_Field	525	804	1148	806	527	855	1150	854
+iowa	Months_in_School_1914	73	410	319	408	74	529	321	526
+iowa	Months_in_School_1914_Public	76	445	203	445	77	483	207	483
+iowa	Months_in_School_1914_Public_Field	146	445	208	445	146	481	209	483
+iowa	Months_in_School_1914_High	204	444	316	444	205	483	318	483
+iowa	Months_in_School_1914_High_Field	255	444	318	444	257	481	322	484
+iowa	Months_in_School_1914_Private	74	484	207	485	79	522	207	525
+iowa	Months_in_School_1914_Private_Field	156	487	207	483	155	521	206	523
+iowa	Months_in_School_1914_College	205	485	318	483	208	523	318	526
+iowa	Months_in_School_1914_College_Field	278	487	317	487	278	522	317	525
+iowa	If_Foreign_Born_are_you_Naturalized	74	711	323	711	75	779	326	775
+iowa	If_Foreign_Born_are_you_Naturalized_Field	200	742	322	739	203	771	320	775
+iowa	Years_in_US	80	775	321	773	79	817	325	814
+iowa	Years_in_US_Field	228	776	321	774	228	812	323	813
+iowa	Years_in_Iowa	79	814	324	810	79	854	323	853
+iowa	Years_in_Iowa_Field	228	811	327	809	227	851	324	853
