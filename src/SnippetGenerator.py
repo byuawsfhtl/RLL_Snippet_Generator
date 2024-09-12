@@ -275,9 +275,7 @@ class SnippetGenerator:
 
             try:
                 image = Image.open(image_path)
-                for field, snippet in self.yield_snippet_and_field(
-                    image_name, image
-                ):
+                for field, snippet in self.yield_snippet_and_field(image_name, image):
                     image_names_no_ext.append(image_name)
                     fields.append(field)
                     snippets.append(snippet)
@@ -289,11 +287,11 @@ class SnippetGenerator:
                 print(e)
 
         if snippets and fields:
-                yield (
-                    image_names_no_ext,
-                    fields,
-                    snippets,
-                )
+            yield (
+                image_names_no_ext,
+                fields,
+                snippets,
+            )
 
     def yield_image_and_name_from_tarfile(self, input_tarfile: str):
         """
