@@ -265,7 +265,7 @@ class SnippetGenerator:
     def get_batches_of_snippets_from_image_paths(
         self, image_paths: list, batch_size: int
     ):
-        image_names_no_ext, snip_names, snippets = [], [], []
+        image_names_no_ext, fields, snippets = [], [], []
 
         for image_path in image_paths:
             image_name = os.path.splitext(os.path.basename(image_path))[0]
@@ -275,20 +275,25 @@ class SnippetGenerator:
 
             try:
                 image = Image.open(image_path)
-                for snip_name, snippet in self.yield_snippet_and_field(
+                for field, snippet in self.yield_snippet_and_field(
                     image_name, image
                 ):
                     image_names_no_ext.append(image_name)
-                    snip_names.append(snip_name)
+                    fields.append(field)
                     snippets.append(snippet)
 
                     if len(snippets) == batch_size:
-                        yield image_names_no_ext, snip_names, snippets
-                        image_names_no_ext, snip_names, snippets = [], [], []
+                        yield image_names_no_ext, fields, snippets
+                        image_names_no_ext, fields, snippets = [], [], []
             except Exception as e:
                 print(e)
 
-        yield image_names_no_ext, snip_names, snippets
+        if snippets and fields:
+                yield (
+                    image_names_no_ext,
+                    fields,
+                    snippets,
+                )
 
     def yield_image_and_name_from_tarfile(self, input_tarfile: str):
         """
