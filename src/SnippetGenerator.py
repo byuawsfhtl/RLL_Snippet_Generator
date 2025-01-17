@@ -41,7 +41,11 @@ class SnippetGenerator:
         )
 
     def save_snippets_to_directory_from_tarfiles(
-        self, input_tarfiles: list, output_directory: str, batch_size: int = 10000
+        self,
+        input_tarfiles: list,
+        output_directory: str,
+        batch_size: int = 10000,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         """
         This function will generate snippets for the user and save them out a directory. The directory structure will be output_directory -> reel_name -> image_name -> snippet.
@@ -50,13 +54,16 @@ class SnippetGenerator:
             input_tarfiles: The paths to the tarfiles that contains images to be snipped.
             output_directory: This is the path to a directory where many directories will be created, and where snippets will be saved to.
             batch_size: This function saves out images in batches to optimize IO performance. batch_size is given a default value.
+            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
         """
         for (
             tarfile_name_no_ext,
             image_names_no_ext,
             fields,
             snippets,
-        ) in self.get_batches_of_snippets_from_tarfiles(input_tarfiles, batch_size):
+        ) in self.get_batches_of_snippets_from_tarfiles(
+            input_tarfiles, batch_size, buffer
+        ):
             for image_name_no_ext, field, snippet in zip(
                 image_names_no_ext, fields, snippets
             ):
@@ -77,6 +84,7 @@ class SnippetGenerator:
         output_directory: str,
         outfile: str,
         batch_size: int = 10000,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         """
         This function will generate snippets for the user and save them out a tar file. The directory structure within the tarfile will be reel_name -> image_name -> snippet.
@@ -86,6 +94,7 @@ class SnippetGenerator:
             output_directory: This is the path to a directory where many directories will be created, and where snippets will be saved to.
             outfile: The name of the output file to save the snippets to. This should be a .tar or .tar.gz file.
             batch_size: This function saves out images in batches to optimize IO performance. batch_size is given a default value.
+            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
         """
         if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
             raise CustomException(
@@ -110,7 +119,9 @@ class SnippetGenerator:
                 image_names_no_ext,
                 fields,
                 snippets,
-            ) in self.get_batches_of_snippets_from_tarfiles(input_tarfiles, batch_size):
+            ) in self.get_batches_of_snippets_from_tarfiles(
+                input_tarfiles, batch_size, buffer
+            ):
                 for image_name_no_ext, field, snippet in zip(
                     image_names_no_ext, fields, snippets
                 ):
@@ -136,13 +147,19 @@ class SnippetGenerator:
                         print(e)
 
     def save_snippets_to_directory_from_image_paths(
-        self, image_paths: list, output_directory: str, batch_size: int = 10000
+        self,
+        image_paths: list,
+        output_directory: str,
+        batch_size: int = 10000,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         for (
             image_names_no_ext,
             fields,
             snippets,
-        ) in self.get_batches_of_snippets_from_image_paths(image_paths, batch_size):
+        ) in self.get_batches_of_snippets_from_image_paths(
+            image_paths, batch_size, buffer
+        ):
             for image_name_no_ext, field, snippet in zip(
                 image_names_no_ext, fields, snippets
             ):
@@ -161,6 +178,7 @@ class SnippetGenerator:
         output_directory: str,
         outfile: str,
         batch_size: int = 10000,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
             raise CustomException(
@@ -184,7 +202,9 @@ class SnippetGenerator:
                 image_names_no_ext,
                 fields,
                 snippets,
-            ) in self.get_batches_of_snippets_from_image_paths(image_paths, batch_size):
+            ) in self.get_batches_of_snippets_from_image_paths(
+                image_paths, batch_size, buffer
+            ):
                 for image_name_no_ext, field, snippet in zip(
                     image_names_no_ext, fields, snippets
                 ):
@@ -209,7 +229,10 @@ class SnippetGenerator:
                         print(e)
 
     def get_batches_of_snippets_from_tarfiles(
-        self, input_tarfiles: list, batch_size: int
+        self,
+        input_tarfiles: list,
+        batch_size: int,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         """
         This function yields a batch of snippets from one or more images.
@@ -217,6 +240,7 @@ class SnippetGenerator:
         Args:
             input_tarfiles: The paths to the tarfiles that contains images to be snipped.
             batch_size: The number of snippets we want this function to yield at a given time.
+            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
         """
 
         for input_tarfile in input_tarfiles:
@@ -240,7 +264,9 @@ class SnippetGenerator:
             for image_name, image in self.yield_image_and_name_from_tarfile(
                 input_tarfile
             ):
-                for field, snippet in self.yield_snippet_and_field(image_name, image):
+                for field, snippet in self.yield_snippet_and_field(
+                    image_name, image, buffer
+                ):
                     snippets.append(snippet)
                     fields.append(field)
                     image_names.append(image_name)
@@ -263,8 +289,19 @@ class SnippetGenerator:
                 )
 
     def get_batches_of_snippets_from_image_paths(
-        self, image_paths: list, batch_size: int
+        self,
+        image_paths: list,
+        batch_size: int,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
+        """
+        This function yields a batch of snippets from one or more images.
+
+        Args:
+            image_paths: The paths to the images that contains
+            batch_size: The number of snippets we want this function to yield at a given time.
+            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
+        """
         image_names_no_ext, fields, snippets = [], [], []
 
         for image_path in image_paths:
@@ -275,7 +312,9 @@ class SnippetGenerator:
 
             try:
                 image = Image.open(image_path)
-                for field, snippet in self.yield_snippet_and_field(image_name, image):
+                for field, snippet in self.yield_snippet_and_field(
+                    image_name, image, buffer
+                ):
                     image_names_no_ext.append(image_name)
                     fields.append(field)
                     snippets.append(snippet)
@@ -326,16 +365,23 @@ class SnippetGenerator:
                     except Exception as e:
                         print("An error occured: ", e)
 
-    def yield_snippet_and_field(self, image_name: str, image: Image.Image):
+    def yield_snippet_and_field(
+        self,
+        image_name: str,
+        image: Image.Image,
+        buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
+    ):
         """
         This function returns the snippets for an image and the future filename of the newly created snippet.
 
         Args:
-            tarfile_name: This is the name of the input_tarfile with the file extension.
-            image_file_name: This is the name of the image file with the file extension.
-            image: This is the PIL.Image that we will snip the snippets from.
+            image_name: The name of the image that the snippet is being generated from.
+            image: The image object that the snippet is being generated from.
+            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
         """
         for field_name, box_coordinates in self.map_coordinates_to_images[image_name]:
+            box_coordinates = self.expand_box_with_buffer(buffer, box_coordinates)
+
             try:
                 self.validate_box_coordinates(box_coordinates)
 
@@ -346,6 +392,26 @@ class SnippetGenerator:
             except Exception as e:
                 print("Error occured: ", e)
                 continue
+
+    def expand_box_with_buffer(
+        self,
+        buffer: tuple[int, int, int, int],
+        box_coordinates: tuple[int, int, int, int],
+    ):
+        """
+        This function expands the box coordinates by the buffer values.
+
+        Args:
+            buffer: This is a list that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
+
+        """
+        left, upper, right, lower = box_coordinates
+        left = left - buffer[0]
+        upper = upper - buffer[1]
+        right = right + buffer[2]
+        lower = lower + buffer[3]
+        box_coordinates = (left, upper, right, lower)
+        return box_coordinates
 
     def validate_box_coordinates(self, box_coordinates: tuple):
         if (box_coordinates[2] - box_coordinates[0]) <= 0:

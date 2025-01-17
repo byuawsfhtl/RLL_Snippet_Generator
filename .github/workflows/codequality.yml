@@ -4,6 +4,7 @@ on:
   push:  # runs the jobs on every push
     branches:
       - main
+  pull_request:  # runs the jobs on all pull requests
 
 jobs:
   code-quality:
