@@ -236,7 +236,6 @@ class SnippetGenerator_Tests(unittest.TestCase):
             image,
         ) in self.snippet_generator.yield_image_and_name_from_tarfile(
             self.image_tar_path,
-            
         ):
             for field, snippet in self.snippet_generator.yield_snippet_and_field(
                 image_name,
@@ -257,19 +256,15 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 else:
                     assert False
 
-
         # Test yielding snippets with the buffer
         for (
             image_name,
             image,
         ) in self.snippet_generator.yield_image_and_name_from_tarfile(
             self.image_tar_path,
-            
         ):
             for field, snippet in self.snippet_generator.yield_snippet_and_field(
-                image_name,
-                image,
-                buffer = (10,10,10,10)
+                image_name, image, buffer=(10, 10, 10, 10)
             ):
                 assert field == "Card_No"
 
