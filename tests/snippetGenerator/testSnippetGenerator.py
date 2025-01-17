@@ -226,12 +226,17 @@ class SnippetGenerator_Tests(unittest.TestCase):
         test_snippet = Image.open(
             os.path.join("tests", "resources", "iowa_image_iowa_Card_No.png")
         )
+        test_snippet_buffer = Image.open(
+            os.path.join("tests", "resources", "iowa_image_iowa_Card_No_buffer.png")
+        )
 
+        # Test yielding snippets without the buffer
         for (
             image_name,
             image,
         ) in self.snippet_generator.yield_image_and_name_from_tarfile(
-            self.image_tar_path
+            self.image_tar_path,
+            
         ):
             for field, snippet in self.snippet_generator.yield_snippet_and_field(
                 image_name,
@@ -245,6 +250,35 @@ class SnippetGenerator_Tests(unittest.TestCase):
                 ):
                     # Compute the difference between the images, returns an image whose pixel values are abs(image_1.pixel_at_xy - image_2.pixel_at_xy)
                     diff = ImageChops.difference(test_snippet, snippet)
+
+                    # Find the bounding box of the non-zero regions of the image, if there is no region, return None
+                    assert diff.getbbox() is None
+                    break
+                else:
+                    assert False
+
+
+        # Test yielding snippets with the buffer
+        for (
+            image_name,
+            image,
+        ) in self.snippet_generator.yield_image_and_name_from_tarfile(
+            self.image_tar_path,
+            
+        ):
+            for field, snippet in self.snippet_generator.yield_snippet_and_field(
+                image_name,
+                image,
+                buffer = (10,10,10,10)
+            ):
+                assert field == "Card_No"
+
+                if (
+                    test_snippet_buffer.size == snippet.size
+                    and test_snippet_buffer.mode == snippet.mode
+                ):
+                    # Compute the difference between the images, returns an image whose pixel values are abs(image_1.pixel_at_xy - image_2.pixel_at_xy)
+                    diff = ImageChops.difference(test_snippet_buffer, snippet)
 
                     # Find the bounding box of the non-zero regions of the image, if there is no region, return None
                     assert diff.getbbox() is None
