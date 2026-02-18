@@ -1,0 +1,10 @@
+pyproject.toml
+SnippetGenerator/SnippetGenerator.py
+SnippetGenerator/__init__.py
+SnippetGenerator/core.py
+SnippetGenerator/utils.py
+SnippetGenerator.egg-info/PKG-INFO
+SnippetGenerator.egg-info/SOURCES.txt
+SnippetGenerator.egg-info/dependency_links.txt
+SnippetGenerator.egg-info/requires.txt
+SnippetGenerator.egg-info/top_level.txt

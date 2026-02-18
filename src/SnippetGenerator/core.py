@@ -1,26 +1,11 @@
-"""
-This file contains the SnippetGenerator class which is used to crop snippets out of images.
-"""
-
 import tarfile
 import io
-import pandas as pd
-import math
 import os
+
+import pandas as pd
 from PIL import Image
-from typing import Tuple
 
-
-class CustomException(Exception):
-    """A custom exception class. Used to identify error with our scripts."""
-
-    def __init__(self, message=""):
-        self.message = message
-        super().__init__(self.message)
-
-    def __str__(self):
-        return f"{self.__class__.__name__}: {self.message}"
-
+from . import utils
 
 class SnippetGenerator:
     """
@@ -30,15 +15,18 @@ class SnippetGenerator:
 
     def __init__(self, df: pd.DataFrame):
         """
-        Initializes the snippet_generator class with the paths to the tar files containing images and json files.
+        Assign paths to the tar files containing images and json files.
 
         Args:
-            df: A DataFrame object that should contain at least the following information: reel_name, image_name, snip_name, x1, y1, ... x4, y4.
+            df: A DataFrame object that should contain at least the following information:
+                reel_name, image_name, snip_name, x1, y1, ... x4, y4.
+            cps = cornerpoints
         """
 
-        self.map_coordinates_to_images = (
-            DataFrame_to_Dictionary_converter().convert_df_to_map(df)
+        self.images_to_cps_map = (
+            utils.convert_df_to_map(df)
         )
+
 
     def save_snippets_to_directory_from_tarfiles(
         self,
@@ -48,20 +36,25 @@ class SnippetGenerator:
         buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         """
-        This function will generate snippets for the user and save them out a directory. The directory structure will be output_directory -> reel_name -> image_name -> snippet.
+        This function will generate snippets for the user and save them out a directory.
+        The directory structure will be output_directory -> reel_name -> image_name -> snippet.
 
         Args:
             input_tarfiles: The paths to the tarfiles that contains images to be snipped.
-            output_directory: This is the path to a directory where many directories will be created, and where snippets will be saved to.
-            batch_size: This function saves out images in batches to optimize IO performance. batch_size is given a default value.
-            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
+            output_directory: This is the path to a directory where many directories will be created,
+                and where snippets will be saved to.
+            batch_size: This function saves out images in batches to optimize IO performance.
+                batch_size is given a default value.
+            buffer: This is a tuple that contains the buffer values for the snippet.
+                The buffer values are [left, upper, right, lower].
+                The buffer values are used to expand the snippet beyond the original coordinates.
         """
         for (
             tarfile_name_no_ext,
             image_names_no_ext,
             fields,
             snippets,
-        ) in self.get_batches_of_snippets_from_tarfiles(
+        ) in self._get_batches_of_snippets_from_tarfiles(
             input_tarfiles, batch_size, buffer
         ):
             for image_name_no_ext, field, snippet in zip(
@@ -97,7 +90,7 @@ class SnippetGenerator:
             buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
         """
         if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
-            raise CustomException(
+            raise utils.CustomException(
                 f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)[-1]}"
             )
 
@@ -119,7 +112,7 @@ class SnippetGenerator:
                 image_names_no_ext,
                 fields,
                 snippets,
-            ) in self.get_batches_of_snippets_from_tarfiles(
+            ) in self._get_batches_of_snippets_from_tarfiles(
                 input_tarfiles, batch_size, buffer
             ):
                 for image_name_no_ext, field, snippet in zip(
@@ -172,6 +165,7 @@ class SnippetGenerator:
 
                 snippet.save(path_to_snippet)
 
+
     def save_snippets_as_tar_from_image_paths(
         self,
         image_paths: list,
@@ -181,7 +175,7 @@ class SnippetGenerator:
         buffer: tuple[int, int, int, int] = (0, 0, 0, 0),
     ):
         if not (outfile.endswith(".tar") or outfile.endswith(".tar.gz")):
-            raise CustomException(
+            raise utils.CustomException(
                 f"Output tarfile in the save_snippets_as_tar function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(outfile)[-1]}"
             )
 
@@ -228,7 +222,7 @@ class SnippetGenerator:
                         print(snippet_filename)
                         print(e)
 
-    def get_batches_of_snippets_from_tarfiles(
+    def _get_batches_of_snippets_from_tarfiles(
         self,
         input_tarfiles: list,
         batch_size: int,
@@ -240,18 +234,21 @@ class SnippetGenerator:
         Args:
             input_tarfiles: The paths to the tarfiles that contains images to be snipped.
             batch_size: The number of snippets we want this function to yield at a given time.
-            buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
+            buffer: This is a tuple that contains the buffer values for the snippet.
+                The buffer values are [left, upper, right, lower].
+                The buffer values are used to expand the snippet beyond the original coordinates.
         """
 
         for input_tarfile in input_tarfiles:
+            # Validate tarfile name and path
             tarfile_name = os.path.basename(input_tarfile)
 
             if not (tarfile_name.endswith(".tar") or tarfile_name.endswith(".tar.gz")):
-                raise CustomException(
-                    f"Input tarfile in the get_batches_of_snippets_from_tarfiles function must have the correct file extension. Ie: .tar or .tar.gz. You provided extension: {os.path.splitext(tarfile_name)[-1]} for file: {input_tarfile}"
+                raise utils.CustomException(
+                    f"Input tarfile in the _get_batches_of_snippets_from_tarfiles function must have the correct file extension: .tar or .tar.gz. You provided extension: {os.path.splitext(tarfile_name)[-1]} for file: {input_tarfile}"
                 )
             if not os.path.exists(input_tarfile):
-                raise CustomException(
+                raise utils.CustomException(
                     f"The path to this tarfile doesn't exist. {input_tarfile}"
                 )
 
@@ -261,10 +258,10 @@ class SnippetGenerator:
                 tarfile_name_no_ext = os.path.splitext(tarfile_name_no_ext)[0]
 
             snippets, fields, image_names = [], [], []
-            for image_name, image in self.yield_image_and_name_from_tarfile(
+            for image_name, image in self._yield_image_and_name_from_tarfile(
                 input_tarfile
             ):
-                for field, snippet in self.yield_snippet_and_field(
+                for field, snippet in self._yield_snippet_and_field(
                     image_name, image, buffer
                 ):
                     snippets.append(snippet)
@@ -305,14 +302,19 @@ class SnippetGenerator:
         image_names_no_ext, fields, snippets = [], [], []
 
         for image_path in image_paths:
-            image_name = os.path.splitext(os.path.basename(image_path))[0]
 
-            if image_name not in self.map_coordinates_to_images:
+            # The original code: Check only if image name is in the map,
+            # But since the paths are stored in the map, just check for that:
+            # image_name = os.path.splitext(os.path.basename(image_path))[0]
+
+            image_name = image_path
+
+            if image_path not in self.images_to_cps_map:
                 continue
 
             try:
                 image = Image.open(image_path)
-                for field, snippet in self.yield_snippet_and_field(
+                for field, snippet in self._yield_snippet_and_field(
                     image_name, image, buffer
                 ):
                     image_names_no_ext.append(image_name)
@@ -332,10 +334,11 @@ class SnippetGenerator:
                 snippets,
             )
 
-    def yield_image_and_name_from_tarfile(self, input_tarfile: str):
+    def _yield_image_and_name_from_tarfile(self, input_tarfile: str):
         """
         This function open and iterates through the images in the tar file.
-        It decodes the image fiels into memory and returns the image data in a PIL.Image object. It also returns the image file_name
+        It decodes the image files into memory and returns the image data in a PIL.Image object.
+        It also returns the image file_name
 
         Args:
             input_tarfile: The path to the tarfile that contains images to be snipped.
@@ -354,7 +357,7 @@ class SnippetGenerator:
                     try:
                         image_name = encoded_image.name
                         image_name = os.path.splitext(os.path.basename(image_name))[0]
-                        if image_name not in self.map_coordinates_to_images:
+                        if image_name not in self.images_to_cps_map:
                             continue
                         else:
                             img_data = Image.open(
@@ -365,7 +368,7 @@ class SnippetGenerator:
                     except Exception as e:
                         print("An error occured: ", e)
 
-    def yield_snippet_and_field(
+    def _yield_snippet_and_field(
         self,
         image_name: str,
         image: Image.Image,
@@ -379,11 +382,11 @@ class SnippetGenerator:
             image: The image object that the snippet is being generated from.
             buffer: This is a tuple that contains the buffer values for the snippet. The buffer values are [left, upper, right, lower]. The buffer values are used to expand the snippet beyond the original coordinates.
         """
-        for field_name, box_coordinates in self.map_coordinates_to_images[image_name]:
-            box_coordinates = self.expand_box_with_buffer(buffer, box_coordinates)
+        for field_name, box_coordinates in self.images_to_cps_map[image_name]:
+            box_coordinates = self._expand_box_with_buffer(buffer, box_coordinates)
 
             try:
-                self.validate_box_coordinates(box_coordinates)
+                self._validate_box_coordinates(box_coordinates)
 
                 yield (
                     field_name,
@@ -393,7 +396,7 @@ class SnippetGenerator:
                 print("Error occured: ", e)
                 continue
 
-    def expand_box_with_buffer(
+    def _expand_box_with_buffer(
         self,
         buffer: tuple[int, int, int, int],
         box_coordinates: tuple[int, int, int, int],
@@ -413,183 +416,15 @@ class SnippetGenerator:
         box_coordinates = (left, upper, right, lower)
         return box_coordinates
 
-    def validate_box_coordinates(self, box_coordinates: tuple):
+
+    def _validate_box_coordinates(self, box_coordinates: tuple):
         if (box_coordinates[2] - box_coordinates[0]) <= 0:
-            raise CustomException(
+            raise utils.CustomException(
                 f"The width of the cropped image must be positive and nonzero. Left and right box coordinates: {box_coordinates[0]}, {box_coordinates[2]}"
             )
         if (box_coordinates[3] - box_coordinates[1]) <= 0:
-            raise CustomException(
+            raise utils.CustomException(
                 f"The height of the cropped image must be positive and nonzero. Top and bottom box coordinates: {box_coordinates[1]}, {box_coordinates[3]}"
             )
 
 
-class DataFrame_to_Dictionary_converter:
-    def convert_df_to_map(self, df: pd.DataFrame):
-        """
-        When we iterate through tarfiles and extract their images, the ordering of the images may not match the ordering of the images
-        in the dataframe that is passed into the class. As such, we take the relevant contents from the dataframe and put in in dictionary format to
-        facilitate the lookup time of getting the coordinate information for a field on the image.
-
-        Args:
-            df: A DataFrame object that contains at least the following information: reel_filename, image_name, snip_name, x1, y1, ... x4, y4.
-        """
-
-        if not self.check_dataframe_has_valid_columns(df):
-            raise CustomException(
-                "Dataframe doesn't have the necessary columns to work with Snippet Generator."
-            )
-
-        dict_of_image_to_field_to_coordinates = {}
-
-        for row in df.itertuples():
-            try:
-                image_name, snip_name, box_coordinates = (
-                    self.get_info_from_dataframe_row(row)
-                )
-
-                self.build_dict(
-                    dict_of_image_to_field_to_coordinates,
-                    image_name,
-                    snip_name,
-                    box_coordinates,
-                )
-
-            except CustomException as e:
-                print("Found error: ", e)
-
-        return dict_of_image_to_field_to_coordinates
-
-    def check_dataframe_has_valid_columns(self, df: pd.DataFrame):
-        """
-        This function ensures that the dataframe passed into the snippet generator has
-        the minimum columns necesarry to generate snippets.
-
-        Args:
-            df: A DataFrame object that should contain at least the following information: reel_filename, image_name, snip_name, x1, y1, ... x4, y4.
-        """
-
-        if len(df.columns) == 0:
-            return False
-
-        needed_columns = [
-            "image_name",
-            "snip_name",
-            "x1",
-            "y1",
-            "x2",
-            "y2",
-            "x3",
-            "y3",
-            "x4",
-            "y4",
-        ]
-        set_of_column_names_from_df = set(df.columns)
-
-        for column_name in needed_columns:
-            if column_name not in set_of_column_names_from_df:
-                return False
-
-        return True
-
-    def get_info_from_dataframe_row(self, row: pd.Series):
-        """
-        This function helps the convert_df_to_map function by checking that the relvant information is found in a dataframe row, it then returns that information.
-
-        Args:
-            row: A pandas series object that represents a row from the pandas dataframe.
-        """
-        if any(self.check_for_errors(x) for x in row):
-            raise CustomException(
-                f"None or Nan values found in dataframe at row: {row.image_name}, {row.snip_name}"
-            )
-        else:
-            image_name, snip_name = (
-                row.image_name,
-                row.snip_name,
-            )
-            box_coordinates = self.get_box_coordinates(row)
-            return image_name, snip_name, box_coordinates
-
-    def check_for_errors(self, x: object):
-        """
-        This is a helper function for the get_info_from_dataframe_row function. It checks if a value is None or Nan.
-
-        Args:
-            x: This is a variable that comes from a row in a dataframe.
-        """
-        if isinstance(x, float):
-            if math.isnan(x):
-                return True
-            else:
-                return False
-        elif x is None:
-            return True
-        else:
-            return False
-
-    def get_box_coordinates(self, row: pd.Series):
-        """
-        This is a helper function for the get_info_from_dataframe_row function. It returns the box coordinates for a field on an image.
-
-        Args:
-            row: A pandas series object that represents a row from the pandas dataframe.
-        """
-        x_coordinates = [row.x1, row.x2, row.x3, row.x4]
-        y_coordinates = [row.y1, row.y2, row.y3, row.y4]
-
-        left, upper, right, lower = (
-            min(x_coordinates),
-            min(y_coordinates),
-            max(x_coordinates),
-            max(y_coordinates),
-        )
-
-        return (left, upper, right, lower)
-
-    def build_dict(
-        self,
-        dict_of_image_to_field_to_coordinates: dict,
-        image_name: str,
-        snip_name: str,
-        box_coordinates: Tuple,
-    ):
-        """
-        This is a helper function for the convert_df_to_map function. It checks to see if an image_name exists in our dictionary. If not, it adds it.
-
-        Args:
-            dict_of_image_to_field_to_coordinates: This is the dictionary that tracks reel to image, image to field and coordinates.
-            reel_filename: This is the filename of the reel. Ie: 14.tar
-            image_name: This is the filename of the image. Ie: 987.png
-            snip_name: This is the name of the field on the image that will be snipped. Ie: person_name
-            box_coordinates: This is a tuple that contains the coordinates to crop a snippets from an image.
-        """
-        if image_name in dict_of_image_to_field_to_coordinates:
-            self.add_field_and_coordinates(
-                dict_of_image_to_field_to_coordinates,
-                image_name,
-                snip_name,
-                box_coordinates,
-            )
-        else:
-            dict_of_image_to_field_to_coordinates[image_name] = []
-            self.add_field_and_coordinates(
-                dict_of_image_to_field_to_coordinates,
-                image_name,
-                snip_name,
-                box_coordinates,
-            )
-
-    def add_field_and_coordinates(
-        self,
-        dict_of_image_to_field_to_coordinates: dict,
-        image_name: str,
-        snip_name: str,
-        box_coordinates: Tuple,
-    ):
-        """
-        This is a helper function for the build_dict function. See that function for argument definitions.
-        """
-        dict_of_image_to_field_to_coordinates[image_name].append(
-            (snip_name, box_coordinates)
-        )

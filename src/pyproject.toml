@@ -1,0 +1,8 @@
+[project]
+name = "SnippetGenerator"
+version = "0.1.0"
+description = "The preferred way of creating image snippits for training our models"
+dependencies = [
+    "Pillow",
+    "numpy",
+]

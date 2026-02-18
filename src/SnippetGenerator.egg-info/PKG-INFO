@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: SnippetGenerator
+Version: 0.1.0
+Summary: The preferred way of creating image snippits for training our models
+Requires-Dist: Pillow
+Requires-Dist: numpy
